@@ -1,0 +1,181 @@
+/* This defines styles and classes used in this book */
+
+body { margin-left: 3%; margin-right: 3%; margin-top: 2%; margin-bottom: 5%; text-align: justify; font-size: medium; }
+
+h1, h2, h3, h4, h5, h6 {
+  page-break-after: avoid !important;
+  page-break-inside: avoid !important;
+  text-indent: 0px;
+  text-align: left;
+  font-family: Helvetica, Geneva, Arial, SunSans-Regular, sans-serif;}
+h1 { text-align: left; color:#C80000; margin: 0; padding: 0.0em; font-size: 130% !important; page-break-after: avoid !important;}
+h2 { text-align: left; color: #900000; font-size: 120% !important; page-break-after: avoid !important;}
+h3 { text-align: left; color:#900000; font-size: 110% !important; page-break-after: avoid !important;}
+h4 { text-align: left; }
+h5 { text-align: left; }
+h6 { text-align: left; }
+h1.title {text-align: center; color: #0000CC; margin: 0; padding: 0.25em; border-top: solid #000000 medium;
+border-bottom: solid #000000 thin; font-size: 130% !important;}
+
+h2.author {text-align: center; color: #000099; font-size: 115% !important;}
+
+h3.date {text-align: center;}
+
+p { font-family: Georgia, "Times New Roman", Times, serif;
+  line-height: 1.5em;
+  margin: 0;
+  margin-bottom:1.5em;
+  text-align: justify;
+  orphans: 2;
+  widows: 2; }
+
+button { font-family: Georgia, "Times New Roman", Times, serif; font-size: medium; }
+code {font-family: monospace; font-size:100% !important; font-weight: bold;}
+
+input[readonly]{
+  background:#F0F0F0;
+  color:black;
+}
+
+figcaption{
+  margin: 0 !important; 
+  text-align: center; 
+  font-size: 68%; 
+  margin-top: 1.0em !important; 
+  margin-bottom: 1.0em !important;}
+figure img {width: 65% !important; max-width: 2.5in !important;}
+p.img {text-align: center; margin-bottom: 0.5em !important;}
+p img.respect {width: 35% !important; max-width: 1.5in !important;}
+p.anchor {text-align: center !important;  margin-bottom: 0.5em !important;}
+p a{font-size: 100% !important;}
+
+
+section.footnotes{margin-top: -1em; margin-bottom: 0em; font-size:smaller;}
+ol{list-style-type: lower-alpha;}
+section.footnotes li{list-style-type: decimal !important;}
+li{margin-top: -1em; margin-bottom: 0em !important;}
+ol.toc{ padding: 0; margin-left: 1em; }
+ol.toc li { list-style-type: none !important; margin: 0; padding: 0;}
+/* For source-code highlighting */
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode, table.sourceCode pre
+   { margin: 0; padding: 0; border: 0; vertical-align: baseline; border: none; }
+td.lineNumbers { border-right: 1px solid #AAAAAA; text-align: right; color: #AAAAAA; padding-right: 5px; padding-left: 5px; }
+td.sourceCode { padding-left: 5px; }
+
+.centered{ display:block; margin-left:auto; margin-right:auto;}
+
+mspace {white-space: pre !important; content:normal;}
+
+math, math[mode="inline"] {
+  display: inline;
+  line-height: 1.0em;
+  font-family: STIXGeneral, "Asana Math", "Times New Roman", Times !important;
+  font-style: normal;
+}
+
+math[mode="display"] {
+  display: block;
+  line-height: 1.0em;
+  text-align: center;
+  font-family: STIXGeneral, "Asana Math", "Times New Roman", Times !important;
+  font-style: normal;
+}
+
+msub>*:first-child[mathsize="big"],
+msup>*:first-child[mathsize="big"],
+msubsup>*:first-child[mathsize="big"],
+munder>*:first-child[mathsize="big"],
+mover>*:first-child[mathsize="big"],
+munderover>*:first-child[mathsize="big"],
+mmultiscripts>*:first-child[mathsize="big"],
+mroot>*:first-child[mathsize="big"] {
+  font-size: 125%
+}
+
+msub>*:first-child[mathsize="small"],
+msup>*:first-child[mathsize="small"],
+msubsup>*:first-child[mathsize="small"],
+munder>*:first-child[mathsize="small"],
+mover>*:first-child[mathsize="small"],
+munderover>*:first-child[mathsize="small"],
+mmultiscripts>*:first-child[mathsize="small"],
+mroot>*:first-child[mathsize="small"] {
+  font-size: 80%
+}
+
+msub>*:first-child,
+msup>*:first-child,
+msubsup>*:first-child,
+munder>*:first-child,
+mover>*:first-child,
+munderover>*:first-child,
+mmultiscripts>*:first-child,
+mroot>*:first-child {
+  font-size: 100%
+}
+
+/*Set size values for the other children of script and limit schema (the 
+  script and limit children) - include scriptlevel increment attribute?
+*/
+
+msub>*[mathsize="big"],
+msup>*[mathsize="big"],
+msubsup>*[mathsize="big"],
+munder>*[mathsize="big"],
+mover>*[mathsize="big"],
+munderover>*[mathsize="big"],
+mmultiscripts>*[mathsize="big"],
+math[display="inline"] mfrac>*[mathsize="big"],
+math *[scriptlevel="+1"][mathsize="big"] {
+  font-size: 89%  /* (.71 times 1.25) */
+}
+
+msub>* [mathsize="small"],
+msup>*[mathsize="small"],
+msubsup>*[mathsize="small"],
+munder>*[mathsize="small"],
+mover>*[mathsize="small"],
+munderover>*[mathsize="small"],
+mmultiscripts>*[mathsize="small"],
+math[display="inline"] mfrac>*[mathsize="small"],
+math *[scriptlevel="+1"][mathsize="small"] {
+  font-size: 57% /* (.71 times .80) */
+}
+
+msub>*,
+msup>*,
+msubsup>*,
+munder>*,
+mover>*,
+munderover>*,
+mmultiscripts>*,
+math[display="inline"] mfrac>*,
+math *[scriptlevel="+1"] {
+  font-size: 71%
+}
+
+mroot>*[mathsize="big"] {
+  font-size: 62%  /* (.50 times 1.25) */
+}
+
+mroot>*[mathsize="small"] {
+  font-size: 40% /* (.50 times .80) */
+}
+
+mroot>* {
+  font-size: 50%
+}
+
+/* Set size values for other scriptlevel increment attributes  */
+
+math *[scriptlevel="+2"][mathsize="big"] {
+  font-size: 63%  /* (.71 times .71 times 1.25) */
+}
+
+math *[scriptlevel="+2"][mathsize="small"] {
+  font-size: 36% /* (.71 times .71 times .71) */
+}
+
+math *[scriptlevel="+2"] {
+  font-size: 50%   /* .71 times .71 */
+}

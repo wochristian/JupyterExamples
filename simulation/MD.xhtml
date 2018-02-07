@@ -1,0 +1,1495 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <title>Molecular Dynamics Exploration</title>
+    <link rel="stylesheet"  type="text/css" href="_ejs_library/css/ejss.css" />
+    <link rel="stylesheet"  type="text/css" href="ejss.css" />
+    <script src="_ejs_library/scripts/common_script.js"></script>
+    <script src="_ejs_library/scripts/textresizedetector.js"></script>
+    <script src="_ejs_library/ejsS.v1.min.js"></script>
+    <script src="MolecularDynamicsExploration/mdpresets.js"></script>
+
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+/* _inputParameters: an object with different values for the model parameters */
+function MolecularDynamicsBasic(_topFrame,_libraryPath,_codebasePath, _inputParameters) {
+  var _model = EJSS_CORE.createAnimationLMS();
+  var _view;
+  var _isPlaying = false;
+  var _isPaused = true;
+  var _isMobile = (navigator===undefined) ? false : navigator.userAgent.match(/iPhone|iPad|iPod|Android|BlackBerry|Opera Mini|IEMobile/i);
+
+var _stringProperties = {};
+  var _tools = {
+    showInputDialog : EJSS_INTERFACE.BoxPanel.showInputDialog,
+    showOkDialog : EJSS_INTERFACE.BoxPanel.showOkDialog,
+    showOkCancelDialog : EJSS_INTERFACE.BoxPanel.showOkCancelDialog,
+    downloadText: EJSS_TOOLS.File.downloadText,
+    uploadText: function(action) { EJSS_TOOLS.File.uploadText(_model,action); } 
+  };
+
+  function _play()  { _isPaused = false; _isPlaying = true;  _model.play();  }
+  function _pause() { _isPaused = true;  _isPlaying = false; _model.pause(); }
+  function _step()  { _pause();  _model.step(); }
+  function _reset() { _model.reset();  _isPaused = _model.isPaused(); _isPlaying = _model.isPlaying(); }
+  _model._play  = _play;
+  _model._pause = _pause;
+  _model._step  = _step;
+  _model._reset = _reset;
+  function _update() { _model.update(); }
+  function _initialize() { _model.initialize(); }
+  function _setFPS(_fps) { _model.setFPS(_fps); }
+  function _setDelay(_delay) { _model.setDelay(_delay); }
+  function _setStepsPerDisplay(_spd) { _model.setStepsPerDisplay(_spd); }
+  function _setUpdateView(_updateView) { _model.setUpdateView(_updateView); }
+  function _setAutoplay(_auto) { _model.setAutoplay(_auto); }
+  function _println(_message) { console.log(_message); }
+
+  function _breakAfterThisPage() { _model.setShouldBreak(true); }
+
+  function _resetSolvers() { if (_model.resetSolvers) _model.resetSolvers(); }
+
+  function _saveText(name,type,content) { if (_model.saveText) _model.saveText(name,type,content); }
+
+  function _saveState(name) { if (_model.saveState) _model.saveState(name); }
+
+  function _saveImage(name,panelname) { if (_model.saveImage) _model.saveImage(name,panelname); }
+
+  function _readState(url,type) { if (_model.readState) _model.readState(url,type); }
+
+  function _readText(url,type,varname) { if (_model.readText) _model.readText(url,type,varname); }
+
+  function _getStringProperty(propertyName) {
+    var _value = _stringProperties[propertyName];
+    if (_value===undefined) return propertyName;
+    else return _value;
+  }
+  var __pagesEnabled = [];
+  function _setPageEnabled(pageName,enabled) { __pagesEnabled[pageName] = enabled; }
+
+  var width; // EjsS Model.Variables.Drawing Vars.width
+  var height; // EjsS Model.Variables.Drawing Vars.height
+  var pxPerUnit; // EjsS Model.Variables.Drawing Vars.pxPerUnit
+  var boxWidth; // EjsS Model.Variables.Drawing Vars.boxWidth
+  var dataDisplay; // EjsS Model.Variables.Drawing Vars.dataDisplay
+  var moreDisplay; // EjsS Model.Variables.Drawing Vars.moreDisplay
+  var atomInfo; // EjsS Model.Variables.Drawing Vars.atomInfo
+  var dragging; // EjsS Model.Variables.Drawing Vars.dragging
+  var selectedAtom; // EjsS Model.Variables.Drawing Vars.selectedAtom
+  var options; // EjsS Model.Variables.Drawing Vars.options
+  var selected; // EjsS Model.Variables.Drawing Vars.selected
+  var selectedIndex; // EjsS Model.Variables.Drawing Vars.selectedIndex
+  var map; // EjsS Model.Variables.Drawing Vars.map
+  var drawingBond; // EjsS Model.Variables.Drawing Vars.drawingBond
+  var backgroundColor; // EjsS Model.Variables.Drawing Vars.backgroundColor
+
+  var N; // EjsS Model.Variables.Particle Vars.N
+  var x; // EjsS Model.Variables.Particle Vars.x
+  var y; // EjsS Model.Variables.Particle Vars.y
+  var vx; // EjsS Model.Variables.Particle Vars.vx
+  var vy; // EjsS Model.Variables.Particle Vars.vy
+  var ay; // EjsS Model.Variables.Particle Vars.ay
+  var ax; // EjsS Model.Variables.Particle Vars.ax
+  var atomColor; // EjsS Model.Variables.Particle Vars.atomColor
+  var time; // EjsS Model.Variables.Particle Vars.time
+  var dt; // EjsS Model.Variables.Particle Vars.dt
+  var fixedCount; // EjsS Model.Variables.Particle Vars.fixedCount
+  var fixedList; // EjsS Model.Variables.Particle Vars.fixedList
+  var fixedTList; // EjsS Model.Variables.Particle Vars.fixedTList
+  var maxBonds; // EjsS Model.Variables.Particle Vars.maxBonds
+  var bondCount; // EjsS Model.Variables.Particle Vars.bondCount
+  var bondList; // EjsS Model.Variables.Particle Vars.bondList
+
+  var g; // EjsS Model.Variables.Constants.g
+  var kineticE; // EjsS Model.Variables.Constants.kineticE
+  var potentialE; // EjsS Model.Variables.Constants.potentialE
+  var gravitationalE; // EjsS Model.Variables.Constants.gravitationalE
+  var totalT; // EjsS Model.Variables.Constants.totalT
+  var averageT; // EjsS Model.Variables.Constants.averageT
+  var averageP; // EjsS Model.Variables.Constants.averageP
+  var totalP; // EjsS Model.Variables.Constants.totalP
+  var sampleCount; // EjsS Model.Variables.Constants.sampleCount
+  var startTime; // EjsS Model.Variables.Constants.startTime
+  var momentumX; // EjsS Model.Variables.Constants.momentumX
+  var momentumY; // EjsS Model.Variables.Constants.momentumY
+  var stepCount; // EjsS Model.Variables.Constants.stepCount
+  var spd; // EjsS Model.Variables.Constants.spd
+  var stepsPerSec; // EjsS Model.Variables.Constants.stepsPerSec
+  var dtAdapt; // EjsS Model.Variables.Constants.dtAdapt
+  var isRunning; // EjsS Model.Variables.Constants.isRunning
+
+  _model.getOdes = function() { return []; };
+
+  _model.removeEvents = function(){
+  };
+
+  function _serialize() { return _model.serialize(); }
+
+  _model._userSerialize = function() {
+    return {
+      width : width,
+      height : height,
+      pxPerUnit : pxPerUnit,
+      boxWidth : boxWidth,
+      dataDisplay : dataDisplay,
+      moreDisplay : moreDisplay,
+      atomInfo : atomInfo,
+      dragging : dragging,
+      selectedAtom : selectedAtom,
+      options : options,
+      selected : selected,
+      selectedIndex : selectedIndex,
+      map : map,
+      drawingBond : drawingBond,
+      backgroundColor : backgroundColor,
+      N : N,
+      x : x,
+      y : y,
+      vx : vx,
+      vy : vy,
+      ay : ay,
+      ax : ax,
+      atomColor : atomColor,
+      time : time,
+      dt : dt,
+      fixedCount : fixedCount,
+      fixedList : fixedList,
+      fixedTList : fixedTList,
+      maxBonds : maxBonds,
+      bondCount : bondCount,
+      bondList : bondList,
+      g : g,
+      kineticE : kineticE,
+      potentialE : potentialE,
+      gravitationalE : gravitationalE,
+      totalT : totalT,
+      averageT : averageT,
+      averageP : averageP,
+      totalP : totalP,
+      sampleCount : sampleCount,
+      startTime : startTime,
+      momentumX : momentumX,
+      momentumY : momentumY,
+      stepCount : stepCount,
+      spd : spd,
+      stepsPerSec : stepsPerSec,
+      dtAdapt : dtAdapt,
+      isRunning : isRunning
+    };
+  };
+
+  function _serializePublic() { return _model.serializePublic(); }
+
+  _model._userSerializePublic = function() {
+    return {
+
+    };
+  };
+
+  _model._readParameters = function(json) {
+    if(typeof json.width != "undefined") width = json.width;
+    if(typeof json.height != "undefined") height = json.height;
+    if(typeof json.pxPerUnit != "undefined") pxPerUnit = json.pxPerUnit;
+    if(typeof json.boxWidth != "undefined") boxWidth = json.boxWidth;
+    if(typeof json.dataDisplay != "undefined") dataDisplay = json.dataDisplay;
+    if(typeof json.moreDisplay != "undefined") moreDisplay = json.moreDisplay;
+    if(typeof json.atomInfo != "undefined") atomInfo = json.atomInfo;
+    if(typeof json.dragging != "undefined") dragging = json.dragging;
+    if(typeof json.selectedAtom != "undefined") selectedAtom = json.selectedAtom;
+    if(typeof json.options != "undefined") options = json.options;
+    if(typeof json.selected != "undefined") selected = json.selected;
+    if(typeof json.selectedIndex != "undefined") selectedIndex = json.selectedIndex;
+    if(typeof json.map != "undefined") map = json.map;
+    if(typeof json.drawingBond != "undefined") drawingBond = json.drawingBond;
+    if(typeof json.backgroundColor != "undefined") backgroundColor = json.backgroundColor;
+    if(typeof json.N != "undefined") N = json.N;
+    if(typeof json.x != "undefined") x = json.x;
+    if(typeof json.y != "undefined") y = json.y;
+    if(typeof json.vx != "undefined") vx = json.vx;
+    if(typeof json.vy != "undefined") vy = json.vy;
+    if(typeof json.ay != "undefined") ay = json.ay;
+    if(typeof json.ax != "undefined") ax = json.ax;
+    if(typeof json.atomColor != "undefined") atomColor = json.atomColor;
+    if(typeof json.time != "undefined") time = json.time;
+    if(typeof json.dt != "undefined") dt = json.dt;
+    if(typeof json.fixedCount != "undefined") fixedCount = json.fixedCount;
+    if(typeof json.fixedList != "undefined") fixedList = json.fixedList;
+    if(typeof json.fixedTList != "undefined") fixedTList = json.fixedTList;
+    if(typeof json.maxBonds != "undefined") maxBonds = json.maxBonds;
+    if(typeof json.bondCount != "undefined") bondCount = json.bondCount;
+    if(typeof json.bondList != "undefined") bondList = json.bondList;
+    if(typeof json.g != "undefined") g = json.g;
+    if(typeof json.kineticE != "undefined") kineticE = json.kineticE;
+    if(typeof json.potentialE != "undefined") potentialE = json.potentialE;
+    if(typeof json.gravitationalE != "undefined") gravitationalE = json.gravitationalE;
+    if(typeof json.totalT != "undefined") totalT = json.totalT;
+    if(typeof json.averageT != "undefined") averageT = json.averageT;
+    if(typeof json.averageP != "undefined") averageP = json.averageP;
+    if(typeof json.totalP != "undefined") totalP = json.totalP;
+    if(typeof json.sampleCount != "undefined") sampleCount = json.sampleCount;
+    if(typeof json.startTime != "undefined") startTime = json.startTime;
+    if(typeof json.momentumX != "undefined") momentumX = json.momentumX;
+    if(typeof json.momentumY != "undefined") momentumY = json.momentumY;
+    if(typeof json.stepCount != "undefined") stepCount = json.stepCount;
+    if(typeof json.spd != "undefined") spd = json.spd;
+    if(typeof json.stepsPerSec != "undefined") stepsPerSec = json.stepsPerSec;
+    if(typeof json.dtAdapt != "undefined") dtAdapt = json.dtAdapt;
+    if(typeof json.isRunning != "undefined") isRunning = json.isRunning;
+  };
+
+  _model._readParametersPublic = function(json) {
+  };
+
+  function _unserializePublic(json) { return _model.unserializePublic(json); }
+
+  _model._userUnserializePublic = function(json) {
+    _model._readParametersPublic(json);
+   _resetSolvers();
+   _model.update();
+  };
+
+  function _unserialize(json) { return _model.unserialize(json); }
+
+  _model._userUnserialize = function(json) {
+    _model._readParameters(json);
+   _resetSolvers();
+   _model.update();
+  };
+
+  _model.addToReset(function() {
+    __pagesEnabled["CheckSize"] = true;
+    __pagesEnabled["Init Atoms"] = true;
+    __pagesEnabled["Read Presets"] = true;
+    __pagesEnabled["ComPADRE"] = false;
+    __pagesEnabled["OnLoad"] = true;
+    __pagesEnabled["AutoStart"] = true;
+    __pagesEnabled["Evol Page"] = true;
+    __pagesEnabled["Update State Vars"] = true;
+  });
+
+  _model.addToReset(function() {
+    width = _isMobile?300:400; // EjsS Model.Variables.Drawing Vars.width
+    height = width; // EjsS Model.Variables.Drawing Vars.height
+    pxPerUnit = 9; // EjsS Model.Variables.Drawing Vars.pxPerUnit
+    boxWidth = width/pxPerUnit; // EjsS Model.Variables.Drawing Vars.boxWidth
+    dataDisplay = "none"; // EjsS Model.Variables.Drawing Vars.dataDisplay
+    moreDisplay = "none"; // EjsS Model.Variables.Drawing Vars.moreDisplay
+    atomInfo = ""; // EjsS Model.Variables.Drawing Vars.atomInfo
+    dragging = false; // EjsS Model.Variables.Drawing Vars.dragging
+    selectedAtom = -1; // EjsS Model.Variables.Drawing Vars.selectedAtom
+    options = new Array(1); // EjsS Model.Variables.Drawing Vars.options
+    (function () {
+      var _i0;
+      for (_i0=0; _i0<1; _i0+=1) {  // EjsS Model.Variables.Drawing Vars.options
+        options[_i0] = 'Presets';  // EjsS Model.Variables.Drawing Vars.options
+      }
+    }());
+    selected = 'Presets'; // EjsS Model.Variables.Drawing Vars.selected
+    selectedIndex = 0; // EjsS Model.Variables.Drawing Vars.selectedIndex
+    drawingBond = false; // EjsS Model.Variables.Drawing Vars.drawingBond
+    backgroundColor = 'Black'; // EjsS Model.Variables.Drawing Vars.backgroundColor
+  });
+
+  _model.addToReset(function() {
+    N = _isMobile  ? 100 : 500; // EjsS Model.Variables.Particle Vars.N
+    x = new Array(N); // EjsS Model.Variables.Particle Vars.x
+    y = new Array(N); // EjsS Model.Variables.Particle Vars.y
+    vx = new Array(N); // EjsS Model.Variables.Particle Vars.vx
+    vy = new Array(N); // EjsS Model.Variables.Particle Vars.vy
+    ay = new Array(N); // EjsS Model.Variables.Particle Vars.ay
+    ax = new Array(N); // EjsS Model.Variables.Particle Vars.ax
+    atomColor = new Array(N); // EjsS Model.Variables.Particle Vars.atomColor
+    time = 0; // EjsS Model.Variables.Particle Vars.time
+    dt = 0.01; // EjsS Model.Variables.Particle Vars.dt
+    fixedCount = 0; // EjsS Model.Variables.Particle Vars.fixedCount
+    fixedList = new Array(N); // EjsS Model.Variables.Particle Vars.fixedList
+    fixedTList = new Array(0); // EjsS Model.Variables.Particle Vars.fixedTList
+    maxBonds = N*3; // EjsS Model.Variables.Particle Vars.maxBonds
+    bondCount = 0; // EjsS Model.Variables.Particle Vars.bondCount
+    bondList = new Array(maxBonds*2); // EjsS Model.Variables.Particle Vars.bondList
+  });
+
+  _model.addToReset(function() {
+    g = 0; // EjsS Model.Variables.Constants.g
+    kineticE = 0; // EjsS Model.Variables.Constants.kineticE
+    potentialE = 0; // EjsS Model.Variables.Constants.potentialE
+    gravitationalE = 0; // EjsS Model.Variables.Constants.gravitationalE
+    totalT = 0; // EjsS Model.Variables.Constants.totalT
+    averageT = 0; // EjsS Model.Variables.Constants.averageT
+    averageP = 0; // EjsS Model.Variables.Constants.averageP
+    sampleCount = 0; // EjsS Model.Variables.Constants.sampleCount
+    startTime = (new Date()).getTime(); // EjsS Model.Variables.Constants.startTime
+    momentumX = 0; // EjsS Model.Variables.Constants.momentumX
+    momentumY = 0; // EjsS Model.Variables.Constants.momentumY
+    stepCount = 0; // EjsS Model.Variables.Constants.stepCount
+    spd = 20; // EjsS Model.Variables.Constants.spd
+    stepsPerSec = 0; // EjsS Model.Variables.Constants.stepsPerSec
+    dtAdapt = false; // EjsS Model.Variables.Constants.dtAdapt
+    isRunning = false; // EjsS Model.Variables.Constants.isRunning
+  });
+
+  if (_inputParameters) {
+    _inputParameters = _model.parseInputParameters(_inputParameters);
+    if (_inputParameters) _model.addToReset(function() { _model._readParameters(_inputParameters); });
+  }
+
+  _model.addToReset(function() {
+    _model.setAutoplay(false);
+    _model.setPauseOnPageExit(true);
+    _model.setFPS(4);
+    _model.setStepsPerDisplay(1);
+  });
+
+  // Compute accelerations of all molecules:  // > CustomCode.Compute Accelerations:1
+  function computeAccelerations() {  // > CustomCode.Compute Accelerations:2
+    var dx, dy, dx2, dy2, r, rSquared, rSquaredInv, attract, repel, fOverR, fx, fy;  // > CustomCode.Compute Accelerations:3
+    var forceCutoff = 3.0;						// distance beyond which we set force=0  // > CustomCode.Compute Accelerations:4
+    var forceCutoff2 = forceCutoff*forceCutoff;  // > CustomCode.Compute Accelerations:5
+    var pEatCutoff = 4 * (Math.pow(forceCutoff,-12) - Math.pow(forceCutoff,-6));  // > CustomCode.Compute Accelerations:6
+    var wallStiffness = 50;						// spring constant for bouncing off walls  // > CustomCode.Compute Accelerations:7
+    var wallForce = 0.0;  // > CustomCode.Compute Accelerations:8
+    potentialE = 0.0;  // > CustomCode.Compute Accelerations:9
+      // > CustomCode.Compute Accelerations:10
+    // first check for bounces off walls:  // > CustomCode.Compute Accelerations:11
+    for (var i=0; i<N; i++) {  // > CustomCode.Compute Accelerations:12
+      if (x[i] < 0.5) {  // > CustomCode.Compute Accelerations:13
+        ax[i] = wallStiffness * (0.5 - x[i]);  // > CustomCode.Compute Accelerations:14
+        wallForce += ax[i];  // > CustomCode.Compute Accelerations:15
+        potentialE += 0.5 * wallStiffness * (0.5-x[i]) * (0.5-x[i]);  // > CustomCode.Compute Accelerations:16
+      } else  // > CustomCode.Compute Accelerations:17
+      if (x[i] > (boxWidth - 0.5)) {  // > CustomCode.Compute Accelerations:18
+        ax[i] = wallStiffness * (boxWidth - 0.5 - x[i]);  // > CustomCode.Compute Accelerations:19
+        wallForce -= ax[i];  // > CustomCode.Compute Accelerations:20
+        potentialE += 0.5 * wallStiffness * (boxWidth-0.5-x[i]) * (boxWidth-0.5-x[i]);  // > CustomCode.Compute Accelerations:21
+      } else ax[i] = 0.0;  // > CustomCode.Compute Accelerations:22
+      if (y[i] < 0.5) {  // > CustomCode.Compute Accelerations:23
+        ay[i] = (wallStiffness * (0.5 - y[i]));  // > CustomCode.Compute Accelerations:24
+        wallForce += ay[i];  // > CustomCode.Compute Accelerations:25
+        potentialE += 0.5 * wallStiffness * (0.5-y[i]) * (0.5-y[i]);  // > CustomCode.Compute Accelerations:26
+      } else  // > CustomCode.Compute Accelerations:27
+      if (y[i] > (boxWidth - 0.5)) {  // > CustomCode.Compute Accelerations:28
+        ay[i] = (wallStiffness * (boxWidth - 0.5 - y[i]));  // > CustomCode.Compute Accelerations:29
+        wallForce -= ay[i];  // > CustomCode.Compute Accelerations:30
+        potentialE += 0.5 * wallStiffness * (boxWidth-0.5-y[i]) * (boxWidth-0.5-y[i]);  // > CustomCode.Compute Accelerations:31
+      } else  ay[i] = -g;				// add gravity if any  // > CustomCode.Compute Accelerations:32
+    }  // > CustomCode.Compute Accelerations:33
+    pressure = wallForce / (4*boxWidth);	// instantaneous pressure  // > CustomCode.Compute Accelerations:34
+    // now compute interaction forces (Lennard-Jones potential):  // > CustomCode.Compute Accelerations:35
+    // (this is where we spend most of our computation time, so try to optimize)  // > CustomCode.Compute Accelerations:36
+    if ((N < 100) || (boxWidth < 4*forceCutoff) /* || !cellListCheck.checked */ ) {  // > CustomCode.Compute Accelerations:37
+      for (var i=0; i<N; i++) {  // > CustomCode.Compute Accelerations:38
+        // simple double-loop over atoms for small system  // > CustomCode.Compute Accelerations:39
+        for (var j=0; j<i; j++) {  // > CustomCode.Compute Accelerations:40
+          dx = x[i] - x[j];  // > CustomCode.Compute Accelerations:41
+          dx2 = dx * dx;  // > CustomCode.Compute Accelerations:42
+          if (dx2 < forceCutoff2) {  // > CustomCode.Compute Accelerations:43
+            // make sure they're close enough to bother  // > CustomCode.Compute Accelerations:44
+            dy = y[i] - y[j];  // > CustomCode.Compute Accelerations:45
+            dy2 = dy * dy;  // > CustomCode.Compute Accelerations:46
+            if (dy2 < forceCutoff2) {  // > CustomCode.Compute Accelerations:47
+              rSquared = dx2 + dy2;  // > CustomCode.Compute Accelerations:48
+              if (rSquared < forceCutoff2) {  // > CustomCode.Compute Accelerations:49
+                rSquaredInv = 1.0 / rSquared;  // > CustomCode.Compute Accelerations:50
+                attract = rSquaredInv * rSquaredInv * rSquaredInv;  // > CustomCode.Compute Accelerations:51
+                repel = attract * attract;  // > CustomCode.Compute Accelerations:52
+                potentialE += (4.0 * (repel - attract)) - pEatCutoff;  // > CustomCode.Compute Accelerations:53
+                fOverR = 24.0 * ((2.0 * repel) - attract) * rSquaredInv;  // > CustomCode.Compute Accelerations:54
+                fx = fOverR * dx;  // > CustomCode.Compute Accelerations:55
+                fy = fOverR * dy;  // > CustomCode.Compute Accelerations:56
+                ax[i] += fx;  // add this force on to i's acceleration (m = 1)  // > CustomCode.Compute Accelerations:57
+                ay[i] += fy;  // > CustomCode.Compute Accelerations:58
+                ax[j] -= fx;  // Newton's 3rd law  // > CustomCode.Compute Accelerations:59
+                ay[j] -= fy;  // > CustomCode.Compute Accelerations:60
+              }  // > CustomCode.Compute Accelerations:61
+            }  // > CustomCode.Compute Accelerations:62
+          }  // > CustomCode.Compute Accelerations:63
+        }  // > CustomCode.Compute Accelerations:64
+      }  // > CustomCode.Compute Accelerations:65
+    } else {  // > CustomCode.Compute Accelerations:66
+      // tricky O(N) cell-based approach for large system  // > CustomCode.Compute Accelerations:67
+      var nCells, cellWidth, xCell, yCell, thisCell, neighborCell, xNeighborCell, yNeighborCell;  // > CustomCode.Compute Accelerations:68
+      var neighborOffset = [ {  // > CustomCode.Compute Accelerations:69
+        x:0, y:0  // > CustomCode.Compute Accelerations:70
+      } , {  // > CustomCode.Compute Accelerations:71
+        x:1, y:0  // > CustomCode.Compute Accelerations:72
+      } , {  // > CustomCode.Compute Accelerations:73
+        x:1, y:1  // > CustomCode.Compute Accelerations:74
+      } , {  // > CustomCode.Compute Accelerations:75
+        x:0, y:1  // > CustomCode.Compute Accelerations:76
+      } , {  // > CustomCode.Compute Accelerations:77
+        x:-1, y:1  // > CustomCode.Compute Accelerations:78
+      } ];	// here, E, NE, N, and NW  // > CustomCode.Compute Accelerations:79
+      nCells = Math.floor(boxWidth/forceCutoff);		// number of cells in a row  // > CustomCode.Compute Accelerations:80
+      cellWidth = boxWidth / nCells;  // > CustomCode.Compute Accelerations:81
+      var listHeader = new Array(nCells*nCells);			// linked list headers  // > CustomCode.Compute Accelerations:82
+      for (var cell=0; cell<nCells*nCells; cell++) listHeader[cell] = -1;		// set all cells to empty  // > CustomCode.Compute Accelerations:83
+      var linkedList = new Array(N);		// element i will point to next atom in same cell  // > CustomCode.Compute Accelerations:84
+      for (var i=0; i<N; i++) {  // > CustomCode.Compute Accelerations:85
+        // this loop assembles the linked list of atoms by cell  // > CustomCode.Compute Accelerations:86
+        xCell = Math.floor(x[i] / cellWidth);		// figure out which cell the atom is in  // > CustomCode.Compute Accelerations:87
+        if (xCell < 0) xCell = 0;  // > CustomCode.Compute Accelerations:88
+        if (xCell >= nCells) xCell = nCells - 1;  // > CustomCode.Compute Accelerations:89
+        yCell = Math.floor(y[i] / cellWidth);  // > CustomCode.Compute Accelerations:90
+        if (yCell < 0) yCell = 0;  // > CustomCode.Compute Accelerations:91
+        if (yCell >= nCells) yCell = nCells - 1;  // > CustomCode.Compute Accelerations:92
+        var cellHeaderIndex = xCell + nCells*yCell;		// flatten 2D structure into 1D array  // > CustomCode.Compute Accelerations:93
+        linkedList[i] = listHeader[cellHeaderIndex];	// this atom now points where the header used to  // > CustomCode.Compute Accelerations:94
+        listHeader[cellHeaderIndex] = i;				// header now points to his atom  // > CustomCode.Compute Accelerations:95
+      } // linked list is now complete  // > CustomCode.Compute Accelerations:96
+      for (xCell=0; xCell<nCells; xCell++) {  // > CustomCode.Compute Accelerations:97
+        // loop over cells  // > CustomCode.Compute Accelerations:98
+        for (yCell=0; yCell<nCells; yCell++) {  // > CustomCode.Compute Accelerations:99
+          thisCell = xCell + nCells*yCell;		// index of this cell in header list  // > CustomCode.Compute Accelerations:100
+          for (var neighborIndex=0; neighborIndex<5; neighborIndex++) {  // > CustomCode.Compute Accelerations:101
+            // loop over neighboring cells  // > CustomCode.Compute Accelerations:102
+            xNeighborCell = xCell + neighborOffset[neighborIndex].x;  // > CustomCode.Compute Accelerations:103
+            if ((xNeighborCell < 0) || (xNeighborCell >= nCells)) continue;	// some neighbors don't actually exist  // > CustomCode.Compute Accelerations:104
+            yNeighborCell = yCell + neighborOffset[neighborIndex].y;  // > CustomCode.Compute Accelerations:105
+            if (yNeighborCell >= nCells) continue;  // > CustomCode.Compute Accelerations:106
+            neighborCell = xNeighborCell + nCells*yNeighborCell;	// index of neighbor cell in header list  // > CustomCode.Compute Accelerations:107
+            var i = listHeader[thisCell];  // > CustomCode.Compute Accelerations:108
+            while (i > -1) {  // > CustomCode.Compute Accelerations:109
+              // loop over atoms in this cell  // > CustomCode.Compute Accelerations:110
+              var j = listHeader[neighborCell];  // > CustomCode.Compute Accelerations:111
+              if (neighborCell == thisCell) j = linkedList[i];	// be sure not to count atoms in this cell twice  // > CustomCode.Compute Accelerations:112
+              while (j > -1) {  // > CustomCode.Compute Accelerations:113
+                // loop over atoms in neighbor cell  // > CustomCode.Compute Accelerations:114
+                dx = x[i] - x[j];  // > CustomCode.Compute Accelerations:115
+                dx2 = dx * dx;  // > CustomCode.Compute Accelerations:116
+                if (dx2 < forceCutoff2) {  // > CustomCode.Compute Accelerations:117
+                  // make sure they're close enough to bother  // > CustomCode.Compute Accelerations:118
+                  dy = y[i] - y[j];  // > CustomCode.Compute Accelerations:119
+                  dy2 = dy * dy;  // > CustomCode.Compute Accelerations:120
+                  if (dy2 < forceCutoff2) {  // > CustomCode.Compute Accelerations:121
+                    rSquared = dx2 + dy2;  // > CustomCode.Compute Accelerations:122
+                    if (rSquared < forceCutoff2) {  // > CustomCode.Compute Accelerations:123
+                      rSquaredInv = 1.0 / rSquared;  // > CustomCode.Compute Accelerations:124
+                      attract = rSquaredInv * rSquaredInv * rSquaredInv;  // > CustomCode.Compute Accelerations:125
+                      repel = attract * attract;  // > CustomCode.Compute Accelerations:126
+                      potentialE += (4.0 * (repel - attract)) - pEatCutoff;  // > CustomCode.Compute Accelerations:127
+                      fOverR = 24.0 * ((2.0 * repel) - attract) * rSquaredInv;  // > CustomCode.Compute Accelerations:128
+                      fx = fOverR * dx;  // > CustomCode.Compute Accelerations:129
+                      fy = fOverR * dy;  // > CustomCode.Compute Accelerations:130
+                      ax[i] += fx;  // add this force on to i's acceleration (m = 1)  // > CustomCode.Compute Accelerations:131
+                      ay[i] += fy;  // > CustomCode.Compute Accelerations:132
+                      ax[j] -= fx;  // Newton's 3rd law  // > CustomCode.Compute Accelerations:133
+                      ay[j] -= fy;  // > CustomCode.Compute Accelerations:134
+                    }  // > CustomCode.Compute Accelerations:135
+                  }  // > CustomCode.Compute Accelerations:136
+                }  // > CustomCode.Compute Accelerations:137
+                j = linkedList[j];  // > CustomCode.Compute Accelerations:138
+              } // end of loop over j  // > CustomCode.Compute Accelerations:139
+              i = linkedList[i];  // > CustomCode.Compute Accelerations:140
+            } // end of loop over i  // > CustomCode.Compute Accelerations:141
+          } // end of loop over neighborIndex  // > CustomCode.Compute Accelerations:142
+        } // end of loop over yCell  // > CustomCode.Compute Accelerations:143
+      } // end of loop over xCell  // > CustomCode.Compute Accelerations:144
+    } // end if (and end of L-J force computation)  // > CustomCode.Compute Accelerations:145
+    // add elastic forces between bonded atoms:  // > CustomCode.Compute Accelerations:146
+    var bondStrength = 100;	// spring constant (vastly less than actual covalent bonds!)  // > CustomCode.Compute Accelerations:147
+    for (var i=0; i<bondCount*2; i+=2) {  // > CustomCode.Compute Accelerations:148
+      var i1 = bondList[i];  // > CustomCode.Compute Accelerations:149
+      var i2 = bondList[i+1];  // > CustomCode.Compute Accelerations:150
+      dx = x[i1] - x[i2];  // > CustomCode.Compute Accelerations:151
+      dy = y[i1] - y[i2];  // > CustomCode.Compute Accelerations:152
+      r = Math.sqrt(dx*dx + dy*dy);  // > CustomCode.Compute Accelerations:153
+      var rOffset = r - 1.122462;		// offset by L-J equilibrium position  // > CustomCode.Compute Accelerations:154
+      potentialE += 0.5 * bondStrength * rOffset*rOffset;  // > CustomCode.Compute Accelerations:155
+      fx = bondStrength * rOffset * dx / r;  // > CustomCode.Compute Accelerations:156
+      fy = bondStrength * rOffset * dy / r;  // > CustomCode.Compute Accelerations:157
+      ax[i1] -= fx;  // > CustomCode.Compute Accelerations:158
+      ay[i1] -= fy;  // > CustomCode.Compute Accelerations:159
+      ax[i2] += fx;  // > CustomCode.Compute Accelerations:160
+      ay[i2] += fy;  // > CustomCode.Compute Accelerations:161
+    }  // > CustomCode.Compute Accelerations:162
+    // fixed atoms don't accelerate:  // > CustomCode.Compute Accelerations:163
+    for (var i=0; i<fixedCount; i++) {  // > CustomCode.Compute Accelerations:164
+      ax[fixedList[i]] = 0;  // > CustomCode.Compute Accelerations:165
+      ay[fixedList[i]] = 0;  // > CustomCode.Compute Accelerations:166
+    }  // > CustomCode.Compute Accelerations:167
+    // if we're pulling on an atom it feels an elastic force toward mouse location:  // > CustomCode.Compute Accelerations:168
+    if (dragging) {  // > CustomCode.Compute Accelerations:169
+      var pullStrength = 1.0;			// spring constant  // > CustomCode.Compute Accelerations:170
+      dx = mouseX - x[clickedAtom];  // > CustomCode.Compute Accelerations:171
+      dy = mouseY - y[clickedAtom];  // > CustomCode.Compute Accelerations:172
+      ax[clickedAtom] += pullStrength * dx;  // > CustomCode.Compute Accelerations:173
+      ay[clickedAtom] += pullStrength * dy;  // > CustomCode.Compute Accelerations:174
+    }  // > CustomCode.Compute Accelerations:175
+  } // end of function computeAccelerations  // > CustomCode.Compute Accelerations:176
+
+  // change number of atoms  // > CustomCode.Utility Func:1
+  function changeN () {  // > CustomCode.Utility Func:2
+    _pause();  // > CustomCode.Utility Func:3
+    N=Math.max(2,N);  // > CustomCode.Utility Func:4
+    N=Math.min(10000,N);  // > CustomCode.Utility Func:5
+    N=Math.min(getMaxN(),N);  // > CustomCode.Utility Func:6
+    x= new Array(N);  // > CustomCode.Utility Func:7
+    y= new Array(N);  // > CustomCode.Utility Func:8
+    vx= new Array(N);  // > CustomCode.Utility Func:9
+    vy= new Array(N);  // > CustomCode.Utility Func:10
+    ax= new Array(N);  // > CustomCode.Utility Func:11
+    ay= new Array(N);  // > CustomCode.Utility Func:12
+    atomColor= new Array(N);  // > CustomCode.Utility Func:13
+    fixedList= new Array(N);  // > CustomCode.Utility Func:14
+    fixedTList= new Array();  // > CustomCode.Utility Func:15
+    bondList= new Array(maxBonds*2);  // > CustomCode.Utility Func:16
+  }  // > CustomCode.Utility Func:17
+  function getMaxN() {  // > CustomCode.Utility Func:18
+    var neighborSpace = 1.5 // distance between atom centers  // > CustomCode.Utility Func:19
+    var nextX = neighborSpace/2;  // > CustomCode.Utility Func:20
+    var nextY = neighborSpace/2;  // > CustomCode.Utility Func:21
+    var maxN=0;  // > CustomCode.Utility Func:22
+    for (var i=0; i<10000; i++) {  // > CustomCode.Utility Func:23
+      nextX += neighborSpace;  // > CustomCode.Utility Func:24
+      maxN++;  // > CustomCode.Utility Func:25
+      if (nextX > boxWidth -neighborSpace/2) {  // > CustomCode.Utility Func:26
+        nextX = neighborSpace/2;  // > CustomCode.Utility Func:27
+        nextY += neighborSpace;  // > CustomCode.Utility Func:28
+        if(nextY>boxWidth-neighborSpace/2) break;  // > CustomCode.Utility Func:29
+      }  // > CustomCode.Utility Func:30
+    }  // > CustomCode.Utility Func:31
+    return maxN;  // > CustomCode.Utility Func:32
+  }  // > CustomCode.Utility Func:33
+  //change all speeds by a given factor (called by button presses):  // > CustomCode.Utility Func:34
+  function speedFactor(factor) {  // > CustomCode.Utility Func:35
+    for (var i=0; i<N; i++) {  // > CustomCode.Utility Func:36
+      vx[i] *= factor;  // > CustomCode.Utility Func:37
+      vy[i] *= factor;  // > CustomCode.Utility Func:38
+    }  // > CustomCode.Utility Func:39
+    resetTime();  // > CustomCode.Utility Func:40
+  }  // > CustomCode.Utility Func:41
+  // Function to reset the time and the averages for temperature and pressure:  // > CustomCode.Utility Func:42
+  function resetTime() {  // > CustomCode.Utility Func:43
+    time = 0.0;  // > CustomCode.Utility Func:44
+    totalT = 0.0;  // > CustomCode.Utility Func:45
+    totalP = 0.0;  // > CustomCode.Utility Func:46
+    sampleCount = 0;  // > CustomCode.Utility Func:47
+    stepCount = 0;  // > CustomCode.Utility Func:48
+    startTime = (new Date()).getTime();  // > CustomCode.Utility Func:49
+    updateTandP();  // > CustomCode.Utility Func:50
+    _model.update();  // > CustomCode.Utility Func:51
+    drawAtoms ();  // > CustomCode.Utility Func:52
+  }  // > CustomCode.Utility Func:53
+  _model.hello= function hola() {  // > CustomCode.Utility Func:54
+    alert('Hola! :-)');  // > CustomCode.Utility Func:55
+  }  // > CustomCode.Utility Func:56
+  _model.showUI= function narrative2() {  // > CustomCode.Utility Func:57
+    _view.narrativePanel.setProperties( {  // > CustomCode.Utility Func:58
+      "Display" : "none"  // > CustomCode.Utility Func:59
+    } );  // > CustomCode.Utility Func:60
+    _view.narrative2Panel.setProperties( {  // > CustomCode.Utility Func:61
+      "Display" : "block"  // > CustomCode.Utility Func:62
+    } );  // > CustomCode.Utility Func:63
+    _model.update();  //calls the fixed relations and updates the view  // > CustomCode.Utility Func:64
+    try{compadreReflow(0)}catch(err){}    // Resizes the modal if contained in a Compadre modal  // > CustomCode.Utility Func:65
+  }  // > CustomCode.Utility Func:66
+  _model.showPhysics= function narrative() {  // > CustomCode.Utility Func:67
+    _view.narrativePanel.setProperties( {  // > CustomCode.Utility Func:68
+      "Display" : "block"  // > CustomCode.Utility Func:69
+    } );  // > CustomCode.Utility Func:70
+    _view.narrative2Panel.setProperties( {  // > CustomCode.Utility Func:71
+      "Display" : "none"  // > CustomCode.Utility Func:72
+    } );  // > CustomCode.Utility Func:73
+    _model.update(); //calls the fixed relations and updates the view  // > CustomCode.Utility Func:74
+    try{compadreReflow(0)}catch(err){}    // Resizes the modal if contained in a Compadre modal  // > CustomCode.Utility Func:75
+  }  // > CustomCode.Utility Func:76
+  function testReflow() {  // > CustomCode.Utility Func:77
+    try{compadreReflow(0)}catch(err){  // > CustomCode.Utility Func:78
+      console.log('testReflow error: '+err)  // > CustomCode.Utility Func:79
+    }    // Resizes the modal if contained in a Compadre modal  // > CustomCode.Utility Func:80
+  }  // > CustomCode.Utility Func:81
+
+  function mouseDown() {  // > CustomCode.Mouse Actions:1
+    if(isRunning) return;                       // only interact if the simulation is paused.  // > CustomCode.Mouse Actions:2
+    var pos = _view.canvas.getMousePosition();  // > CustomCode.Mouse Actions:3
+    selectedAtom = findAtom(pos[0]/pxPerUnit, (height-pos[1])/pxPerUnit);	// returns -1 if none found  // > CustomCode.Mouse Actions:4
+    //console.log ("down index="+selectedAtom);  // > CustomCode.Mouse Actions:5
+    showAtomData();  // > CustomCode.Mouse Actions:6
+    drawAtoms ();  // > CustomCode.Mouse Actions:7
+  }  // > CustomCode.Mouse Actions:8
+  function mouseUp() {  // > CustomCode.Mouse Actions:9
+    selectedAtom = -1;  // > CustomCode.Mouse Actions:10
+    dataDisplay="none";  // > CustomCode.Mouse Actions:11
+    drawAtoms ();  // > CustomCode.Mouse Actions:12
+  }  // > CustomCode.Mouse Actions:13
+  function mouseMove() {  // > CustomCode.Mouse Actions:14
+    if(isRunning || selectedAtom<0) return;  // > CustomCode.Mouse Actions:15
+    var pos = _view.canvas.getMousePosition();  // > CustomCode.Mouse Actions:16
+    x[selectedAtom] = pos[0]/pxPerUnit;  // > CustomCode.Mouse Actions:17
+    y[selectedAtom] = (height-pos[1])/pxPerUnit;  // > CustomCode.Mouse Actions:18
+    showAtomData();  // > CustomCode.Mouse Actions:19
+    drawAtoms ();  // > CustomCode.Mouse Actions:20
+  }  // > CustomCode.Mouse Actions:21
+  // Look for an atom at physical coordinates thisx, thisy and return its index, or -1 if not found:  // > CustomCode.Mouse Actions:22
+  function findAtom(thisx, thisy) {  // > CustomCode.Mouse Actions:23
+    var radius2 = 0.6 * 0.6;		// square of atom's radius (0.5), plus a bit to be generous  // > CustomCode.Mouse Actions:24
+    radius2 *=4;                       // double the senstitive area for mobilbe apps  // > CustomCode.Mouse Actions:25
+    var found = false;		        // will be true if/when we find an atom under mouse  // > CustomCode.Mouse Actions:26
+    var i = 0;  // > CustomCode.Mouse Actions:27
+    while (i < N) {  // > CustomCode.Mouse Actions:28
+      var dx = x[i] - thisx;  // > CustomCode.Mouse Actions:29
+      var dy = y[i] - thisy;  // > CustomCode.Mouse Actions:30
+      if (dx*dx + dy*dy < radius2) {  // > CustomCode.Mouse Actions:31
+        found = true;  // > CustomCode.Mouse Actions:32
+        break;  // > CustomCode.Mouse Actions:33
+      }  // > CustomCode.Mouse Actions:34
+      i++;  // > CustomCode.Mouse Actions:35
+    }  // > CustomCode.Mouse Actions:36
+    if (found) return i;  // > CustomCode.Mouse Actions:37
+    else return -1;  // > CustomCode.Mouse Actions:38
+  }  // > CustomCode.Mouse Actions:39
+  function addCanvasListener() {  // > CustomCode.Mouse Actions:40
+    _view.canvas.addEventListener('touchstart', function(evt) { mouseDown()} , false);  // > CustomCode.Mouse Actions:41
+    _view.canvas.addEventListener('touchmove', function(evt) { mouseMove()} , false);  // > CustomCode.Mouse Actions:42
+    _view.canvas.addEventListener('touchend', function(evt) { mouseUp()} , false);  // > CustomCode.Mouse Actions:43
+  }  // > CustomCode.Mouse Actions:44
+
+  // List of colors for indicating speeds:  // > CustomCode.Draw:1
+  var speedColorList = ['#0000e0','#0000ff','#4800f4','#6000e8','#7800d0','#9000b0','#b00080',  // > CustomCode.Draw:2
+  '#d00060','#e80030','#ff0000','#ff3800','#ff5000','#ff6800','#ff8000','#ff9600','#ffb400',  // > CustomCode.Draw:3
+  '#ffd200','#ffe600','#ffff00','#ffff78'];  // > CustomCode.Draw:4
+  // Sets colors  // > CustomCode.Draw:5
+  function setColors() {  // > CustomCode.Draw:6
+    var speedLimit=3.0;  // > CustomCode.Draw:7
+    var lastColor=speedColorList[speedColorList.length-1];  // > CustomCode.Draw:8
+    for (var i=0; i<N; i++) {  // > CustomCode.Draw:9
+      var speed= Math.sqrt(vx[i]*vx[i]+vy[i]*vy[i]);  // > CustomCode.Draw:10
+      if (speed > speedLimit) {  // > CustomCode.Draw:11
+        atomColor[i]= lastColor;  // > CustomCode.Draw:12
+      } else {  // > CustomCode.Draw:13
+        atomColor[i] = speedColorList[Math.floor(speed*speedColorList.length/speedLimit)];  // > CustomCode.Draw:14
+      }  // > CustomCode.Draw:15
+    }  // > CustomCode.Draw:16
+  }  // > CustomCode.Draw:17
+  function drawAtoms () {  // > CustomCode.Draw:18
+    setColors();  // > CustomCode.Draw:19
+    var context = _view.canvas.getContext('2d');  // > CustomCode.Draw:20
+    //context.fillStyle='Black';  // > CustomCode.Draw:21
+    context.fillStyle=backgroundColor;  // > CustomCode.Draw:22
+    context.fillRect(0,0,width,height);  // > CustomCode.Draw:23
+    for(var i=0; i<N;i++) {  // > CustomCode.Draw:24
+      var pixelX = x[i] * pxPerUnit;  // > CustomCode.Draw:25
+      var pixelY = height - (y[i] * pxPerUnit);  // > CustomCode.Draw:26
+      context.fillStyle=atomColor[i];  // > CustomCode.Draw:27
+      context.beginPath();  // > CustomCode.Draw:28
+      context.arc(pixelX, pixelY, pxPerUnit/2, 0, 2*Math.PI);  // > CustomCode.Draw:29
+      context.fill();  // > CustomCode.Draw:30
+    }  // > CustomCode.Draw:31
+    // Redraw fixed atoms in light gray:  // > CustomCode.Draw:32
+    context.fillStyle = "#c0c0c0";	// light gray for fixed atoms  // > CustomCode.Draw:33
+    for (var i=0; i<fixedCount; i++) {  // > CustomCode.Draw:34
+      var pixelX = x[fixedList[i]] * pxPerUnit;  // > CustomCode.Draw:35
+      var pixelY = height - (y[fixedList[i]] * pxPerUnit);  // > CustomCode.Draw:36
+      context.beginPath();  // > CustomCode.Draw:37
+      context.arc(pixelX, pixelY, pxPerUnit/2, 0, 2*Math.PI);  // > CustomCode.Draw:38
+      context.fill();  // > CustomCode.Draw:39
+    }  // > CustomCode.Draw:40
+    // Draw light gray dot on fixed-T atoms:  // > CustomCode.Draw:41
+    context.fillStyle = "#c0c0c0";  // > CustomCode.Draw:42
+    for (var i=0; i<fixedTList.length; i++) {  // > CustomCode.Draw:43
+      var pixelX = x[fixedTList[i].pointer] * pxPerUnit;  // > CustomCode.Draw:44
+      var pixelY = height - (y[fixedTList[i].pointer] * pxPerUnit);  // > CustomCode.Draw:45
+      context.beginPath();  // > CustomCode.Draw:46
+      context.arc(pixelX, pixelY, pxPerUnit/4, 0, 2*Math.PI);  // > CustomCode.Draw:47
+      context.fill();  // > CustomCode.Draw:48
+    }  // > CustomCode.Draw:49
+    // Draw bonds between molecules:  // > CustomCode.Draw:50
+    context.strokeStyle = "#808080";		// gray  // > CustomCode.Draw:51
+    context.lineWidth = 1;  // > CustomCode.Draw:52
+    var x1, x2, y1, y2;						// pixel coordinates of line representing bond  // > CustomCode.Draw:53
+    for (var i=0; i<bondCount*2; i+=2) {  // > CustomCode.Draw:54
+      var i1 = bondList[i];  // > CustomCode.Draw:55
+      var i2 = bondList[i+1];  // > CustomCode.Draw:56
+      x1 = x[i1] * pxPerUnit;  // > CustomCode.Draw:57
+      y1 = height - (y[i1] * pxPerUnit);  // > CustomCode.Draw:58
+      x2 = x[i2] * pxPerUnit;  // > CustomCode.Draw:59
+      y2 = height - (y[i2] * pxPerUnit);  // > CustomCode.Draw:60
+      context.beginPath();  // > CustomCode.Draw:61
+      context.moveTo(x1, y1);  // > CustomCode.Draw:62
+      context.lineTo(x2, y2);  // > CustomCode.Draw:63
+      context.stroke();  // > CustomCode.Draw:64
+    }  // > CustomCode.Draw:65
+    // Draw the bond that's being created, if any:  // > CustomCode.Draw:66
+    if (drawingBond) {  // > CustomCode.Draw:67
+      context.beginPath();  // > CustomCode.Draw:68
+      context.moveTo(x[clickedAtom]*pxPerUnit, height-(y[clickedAtom]*pxPerUnit));  // > CustomCode.Draw:69
+      context.lineTo(mouseX*pxPerUnit, height-(mouseY*pxPerUnit));  // > CustomCode.Draw:70
+      context.stroke();  // > CustomCode.Draw:71
+    }  // > CustomCode.Draw:72
+    // Draw elastic cord to mouse location if appropriate:  // > CustomCode.Draw:73
+    if ((isRunning) && (dragging)) {  // > CustomCode.Draw:74
+      context.strokeStyle = "#808080";	// gray  // > CustomCode.Draw:75
+      context.lineWidth = 2;  // > CustomCode.Draw:76
+      context.beginPath();  // > CustomCode.Draw:77
+      context.moveTo(x[clickedAtom]*pxPerUnit, height-(y[clickedAtom]*pxPerUnit));  // > CustomCode.Draw:78
+      context.lineTo(mouseX*pxPerUnit, height-(mouseY*pxPerUnit));  // > CustomCode.Draw:79
+      context.stroke();  // > CustomCode.Draw:80
+    }  // > CustomCode.Draw:81
+    drawMessageBoxes(context);  // > CustomCode.Draw:82
+    context.lineWidth = 2;  // > CustomCode.Draw:83
+    context.strokeStyle='Gray';  // > CustomCode.Draw:84
+    context.strokeRect(1,1,width-2,height-2);  // > CustomCode.Draw:85
+  }  // > CustomCode.Draw:86
+  function drawMessageBoxes(context) {  // > CustomCode.Draw:87
+    return;  // > CustomCode.Draw:88
+    var timeStr="sim time = "+Number(time).toFixed(3);  // > CustomCode.Draw:89
+    var w=context.measureText(timeStr).width;  // > CustomCode.Draw:90
+    context.fillStyle='Yellow';  // > CustomCode.Draw:91
+    context.fillRect(0,0,w+10,20);  // > CustomCode.Draw:92
+    context.font = "14px Arial";  // > CustomCode.Draw:93
+    context.fillStyle='Red';  // > CustomCode.Draw:94
+    context.fillText(timeStr,5,17);  // > CustomCode.Draw:95
+    var spsStr="steps/sec = "+Number(stepsPerSec).toFixed(0);  // > CustomCode.Draw:96
+    var w2=context.measureText(spsStr).width;  // > CustomCode.Draw:97
+    context.fillStyle='Yellow';  // > CustomCode.Draw:98
+    context.fillRect(width-w2-10,0,w2+10,20);  // > CustomCode.Draw:99
+    context.font = "14px Arial";  // > CustomCode.Draw:100
+    context.fillStyle='Red';  // > CustomCode.Draw:101
+    context.fillText(spsStr,width-w2-5,17);  // > CustomCode.Draw:102
+  }  // > CustomCode.Draw:103
+  // Update data for selected atom:  // > CustomCode.Draw:104
+  function showAtomData() {  // > CustomCode.Draw:105
+    if (selectedAtom <0) {  // > CustomCode.Draw:106
+      dataDisplay="none";  // > CustomCode.Draw:107
+    } else {  // > CustomCode.Draw:108
+      dataDisplay="block";  // > CustomCode.Draw:109
+      var left=Math.round((x[selectedAtom]+0.4) * pxPerUnit) + "px";  // > CustomCode.Draw:110
+      var top=Math.round(height - ((y[selectedAtom]-0.4) * pxPerUnit)) + "px";  // > CustomCode.Draw:111
+      _view.selectDataPanel.setProperty("CSS", {  // > CustomCode.Draw:112
+        "left":left,"top":top  // > CustomCode.Draw:113
+      } );  // > CustomCode.Draw:114
+      atomInfo="<b>Atom " + selectedAtom + "</b><br/>"+  // > CustomCode.Draw:115
+      "x = " + Number(x[selectedAtom]).toExponential(3) + "<br/>" +  // > CustomCode.Draw:116
+      "y = " + Number(y[selectedAtom]).toExponential(3) + "<br/>" +  // > CustomCode.Draw:117
+      "v<sub>x</sub>= " + Number(vx[selectedAtom]).toExponential(3) + "<br/>" +  // > CustomCode.Draw:118
+      "v<sub>y</sub>= " + Number(vy[selectedAtom]).toExponential(3);  // > CustomCode.Draw:119
+    }  // > CustomCode.Draw:120
+  }  // > CustomCode.Draw:121
+
+  // Simulate function executes a bunch of steps and then schedules another call to itself:  // > CustomCode.Simulate:1
+  function simulate() {  // > CustomCode.Simulate:2
+    // Execute a bunch of time steps:  // > CustomCode.Simulate:3
+    for (var step=0; step<spd; step++) {  // > CustomCode.Simulate:4
+      doStep();  // > CustomCode.Simulate:5
+    }  // > CustomCode.Simulate:6
+    stepCount += spd;  // > CustomCode.Simulate:7
+    drawAtoms ();  // > CustomCode.Simulate:8
+    if (isRunning) {  // > CustomCode.Simulate:9
+      window.setTimeout(simulate, 1);  // > CustomCode.Simulate:10
+    }  // > CustomCode.Simulate:11
+  }  // > CustomCode.Simulate:12
+
+  function doStep () {  // > CustomCode.Do Step:1
+    var halfdt = 0.5 * dt;  // > CustomCode.Do Step:2
+    var halfdtsquared = halfdt * dt;  // > CustomCode.Do Step:3
+    for (var i=0; i<N; i++) {  // > CustomCode.Do Step:4
+      x[i] += vx[i]*dt + ax[i]*halfdtsquared;  // > CustomCode.Do Step:5
+      y[i] += vy[i]*dt + ay[i]*halfdtsquared;  // > CustomCode.Do Step:6
+      vx[i] += ax[i]*halfdt;  // > CustomCode.Do Step:7
+      vy[i] += ay[i]*halfdt;  // > CustomCode.Do Step:8
+    }  // > CustomCode.Do Step:9
+    computeAccelerations();  // > CustomCode.Do Step:10
+    for (var i=0; i<N; i++) {  // > CustomCode.Do Step:11
+      vx[i] += ax[i]*halfdt;  // > CustomCode.Do Step:12
+      vy[i] += ay[i]*halfdt;  // > CustomCode.Do Step:13
+    }  // > CustomCode.Do Step:14
+    for (var i=0; i<fixedCount; i++) {  // > CustomCode.Do Step:15
+      // force v = 0 for fixed positon molecules  // > CustomCode.Do Step:16
+      vx[fixedList[i]] = 0;  // > CustomCode.Do Step:17
+      vy[fixedList[i]] = 0;  // > CustomCode.Do Step:18
+    }  // > CustomCode.Do Step:19
+    // Assign random velocities to fixed-Temperature atoms:  // > CustomCode.Do Step:20
+    for (var i=0; i<fixedTList.length; i++) {  // > CustomCode.Do Step:21
+      if (Math.random() < 5*dt) {  // > CustomCode.Do Step:22
+        // do this only a small percentage of the time  // > CustomCode.Do Step:23
+        var x1, x2, w;  // > CustomCode.Do Step:24
+        do {  // > CustomCode.Do Step:25
+          x1 = 2 * Math.random() - 1;  // > CustomCode.Do Step:26
+          x2 = 2 * Math.random() - 1;  // > CustomCode.Do Step:27
+          w = x1*x1 + x2*x2;  // > CustomCode.Do Step:28
+        } while (w >= 1.0);  // > CustomCode.Do Step:29
+        var u = Math.sqrt(-2*Math.log(w)/w);	// polar Box-Muller transformation to get Gaussian distribution  // > CustomCode.Do Step:30
+        vx[fixedTList[i].pointer] = u * x1 * Math.sqrt(fixedTList[i].temp);  // > CustomCode.Do Step:31
+        vy[fixedTList[i].pointer] = u * x2 * Math.sqrt(fixedTList[i].temp);  // > CustomCode.Do Step:32
+      }  // > CustomCode.Do Step:33
+    }  // > CustomCode.Do Step:34
+    time += dt;  // > CustomCode.Do Step:35
+  }  // > CustomCode.Do Step:36
+  // Compute statistical data from current system state:  // > CustomCode.Do Step:37
+  function computeStats() {  // > CustomCode.Do Step:38
+    kineticE = 0;  // > CustomCode.Do Step:39
+    gravitationalE = 0;  // > CustomCode.Do Step:40
+    momentumX = 0;  // > CustomCode.Do Step:41
+    momentumY = 0;  // > CustomCode.Do Step:42
+    for (var i=0; i<N; i++) {  // > CustomCode.Do Step:43
+      kineticE += 0.5 * (vx[i]*vx[i] + vy[i]*vy[i]);  // > CustomCode.Do Step:44
+      gravitationalE += g * y[i];  // > CustomCode.Do Step:45
+      momentumX += vx[i];  // > CustomCode.Do Step:46
+      momentumY += vy[i];  // > CustomCode.Do Step:47
+    }  // > CustomCode.Do Step:48
+    var currentT = kineticE / (N - fixedCount);  // > CustomCode.Do Step:49
+    if(isRunning) safetyCheck(currentT);  // > CustomCode.Do Step:50
+  }  // > CustomCode.Do Step:51
+  // Check for run-away instability, and try to keep dt small enough to prevent it:  // > CustomCode.Do Step:52
+  function safetyCheck(T) {  // > CustomCode.Do Step:53
+    if (T > 1000) { // handle run-away instability  // > CustomCode.Do Step:54
+      var alertString = "Oops! The simulation has become unstable.\n";  // > CustomCode.Do Step:55
+      alertString += "Avoid placing atoms so they overlap and use a smaller time step if high temperatures are expected.\n";  // > CustomCode.Do Step:56
+      alertString += "Click OK and reset the initial conditions.";  // > CustomCode.Do Step:57
+      if(isRunning)window.setTimeout(alert(alertString), 50);  // > CustomCode.Do Step:58
+      isRunning=false;  // > CustomCode.Do Step:59
+      _pause();  // > CustomCode.Do Step:60
+    } else {  // > CustomCode.Do Step:61
+      var safetyFactor = 4000;  // > CustomCode.Do Step:62
+      if ((T > 1/(safetyFactor*dt*dt)) && (dtAdapt)) {  // > CustomCode.Do Step:63
+        dt = Math.max(Math.sqrt(1/(safetyFactor*T)) - 0.001, 0.001);  // > CustomCode.Do Step:64
+      }  // > CustomCode.Do Step:65
+      if ((T < 0.5/(safetyFactor*dt*dt)) && (dtAdapt)) {  // > CustomCode.Do Step:66
+        dt = Math.min(Math.sqrt(0.5/(safetyFactor*T)) + 0.001, 0.05);  // > CustomCode.Do Step:67
+      }  // > CustomCode.Do Step:68
+    }  // > CustomCode.Do Step:69
+  }  // > CustomCode.Do Step:70
+  // Periodically update the temperature and pressure accumulators  // > CustomCode.Do Step:71
+  function updateTandP() {  // > CustomCode.Do Step:72
+      sampleCount++;  // > CustomCode.Do Step:73
+      kineticE = 0;  // > CustomCode.Do Step:74
+      for (var i=0; i<N; i++) kineticE += 0.5 * (vx[i]*vx[i] + vy[i]*vy[i]);  // > CustomCode.Do Step:75
+      var currentT = kineticE /(N-fixedCount);  // > CustomCode.Do Step:76
+      totalT += currentT;  // > CustomCode.Do Step:77
+      safetyCheck(currentT);  // > CustomCode.Do Step:78
+      averageT = totalT / sampleCount;  // > CustomCode.Do Step:79
+      totalP += pressure;  // > CustomCode.Do Step:80
+      averageP = totalP / sampleCount;  // > CustomCode.Do Step:81
+  }  // > CustomCode.Do Step:82
+
+  // Load data from one of the presets (no validity checking!):  // > CustomCode.Load Presets:1
+  function loadPreset(index) {  // > CustomCode.Load Presets:2
+    N = presetList[index].N;	// the presetList array is in mdpresets.js; loaded in Run Options  // > CustomCode.Load Presets:3
+    boxWidth = presetList[index].size;  // > CustomCode.Load Presets:4
+    pxPerUnit = width / boxWidth;  // > CustomCode.Load Presets:5
+    changeN ();                   // allocate arrays of proper size  // > CustomCode.Load Presets:6
+    var volume = Math.round(boxWidth * boxWidth);  // > CustomCode.Load Presets:7
+    g=presetList[index].gravity;  // > CustomCode.Load Presets:8
+    dt = presetList[index].dt;  // > CustomCode.Load Presets:9
+    spd = presetList[index].steps;  // > CustomCode.Load Presets:10
+    for (var i=0; i<N; i++) {  // > CustomCode.Load Presets:11
+      x[i] = presetList[index].data[i*4];  // > CustomCode.Load Presets:12
+      y[i] = presetList[index].data[i*4+1];  // > CustomCode.Load Presets:13
+      vx[i] = presetList[index].data[i*4+2];  // > CustomCode.Load Presets:14
+      vy[i] = presetList[index].data[i*4+3];  // > CustomCode.Load Presets:15
+    }  // > CustomCode.Load Presets:16
+    fixedCount = presetList[index].fixedCount;  // > CustomCode.Load Presets:17
+    for (var i=0; i<fixedCount; i++) {  // > CustomCode.Load Presets:18
+      fixedList[i] = presetList[index].fixedList[i];  // > CustomCode.Load Presets:19
+    }  // > CustomCode.Load Presets:20
+    bondCount = presetList[index].bondCount;  // > CustomCode.Load Presets:21
+    for (var i=0; i<2*bondCount; i++) {  // > CustomCode.Load Presets:22
+      bondList[i] = presetList[index].bondList[i];  // > CustomCode.Load Presets:23
+    }  // > CustomCode.Load Presets:24
+    fixedTList = [];  // > CustomCode.Load Presets:25
+    for (var i=0; i<presetList[index].fixedTCount; i++) {  // > CustomCode.Load Presets:26
+      fixedTList.push( {  // > CustomCode.Load Presets:27
+        pointer:0, temp:0  // > CustomCode.Load Presets:28
+      } );  // > CustomCode.Load Presets:29
+      fixedTList[i].pointer = Number(presetList[index].fixedTList[i].pointer);  // > CustomCode.Load Presets:30
+      fixedTList[i].temp = Number(presetList[index].fixedTList[i].temp);  // > CustomCode.Load Presets:31
+    }  // > CustomCode.Load Presets:32
+    if (selectedAtom >= N) {  // > CustomCode.Load Presets:33
+      selectedAtom = -1;  // > CustomCode.Load Presets:34
+    }  // > CustomCode.Load Presets:35
+    computeAccelerations();  // > CustomCode.Load Presets:36
+    resetTime();  // > CustomCode.Load Presets:37
+    drawAtoms ();  // > CustomCode.Load Presets:38
+  }  // > CustomCode.Load Presets:39
+
+  function comPADRE () { // reflows page on ComPADRE  // > CustomCode.ComPADRE:1
+    try {  // > CustomCode.ComPADRE:2
+      runEJSSonload()  // > CustomCode.ComPADRE:3
+    } catch(err) {  // > CustomCode.ComPADRE:4
+      //console.log('runEJSSonload error: '+err)  // > CustomCode.ComPADRE:5
+    } // runs the reflow() function on Compadre  // > CustomCode.ComPADRE:6
+  }  // > CustomCode.ComPADRE:7
+
+  _model.addToInitialization(function() {
+    if (!__pagesEnabled["CheckSize"]) return;
+    //width=Math.min(width, 0.7*screen.availWidth);  // > Initialization.CheckSize:1
+    //height=Math.min(height,0.7*screen.availHeight);  // > Initialization.CheckSize:2
+    // make sure the image is not too large for phones and ionic apps.  // > Initialization.CheckSize:3
+    var size=0.7*Math.min(screen.availWidth,screen.availHeight);  // > Initialization.CheckSize:4
+    if(size<width){  // > Initialization.CheckSize:5
+      width=size;  // > Initialization.CheckSize:6
+      height=size;  // > Initialization.CheckSize:7
+    }  // > Initialization.CheckSize:8
+  });
+
+  _model.addToInitialization(function() {
+    if (!__pagesEnabled["Init Atoms"]) return;
+    var neighborSpace = 1.5;	// initial separation between molecules  // > Initialization.Init Atoms:1
+    var nextX = neighborSpace/2;  // > Initialization.Init Atoms:2
+    var nextY = neighborSpace/2;  // > Initialization.Init Atoms:3
+    for (var i=0; i<N; i++) {  // > Initialization.Init Atoms:4
+      x[i] = nextX; y[i] = nextY;  // > Initialization.Init Atoms:5
+      vx[i] = 0.0; vy[i] = 0.0;  // > Initialization.Init Atoms:6
+      ax[i] = 0.0; ay[i] = 0.0;  // > Initialization.Init Atoms:7
+      nextX += neighborSpace;  // > Initialization.Init Atoms:8
+      if (nextX > boxWidth -neighborSpace/2) {  // > Initialization.Init Atoms:9
+        nextX = neighborSpace/2;  // > Initialization.Init Atoms:10
+        nextY += neighborSpace;  // > Initialization.Init Atoms:11
+      }  // > Initialization.Init Atoms:12
+    }  // > Initialization.Init Atoms:13
+    time = 0.0;  // > Initialization.Init Atoms:14
+    totalT = 0.0;  // > Initialization.Init Atoms:15
+    totalP = 0.0;  // > Initialization.Init Atoms:16
+    stepCount=sampleCount = 0;  // > Initialization.Init Atoms:17
+    startTime = (new Date()).getTime();  // > Initialization.Init Atoms:18
+    computeAccelerations();  // > Initialization.Init Atoms:19
+    window.setTimeout(drawAtoms, 100);  // > Initialization.Init Atoms:20
+    //window.setTimeout(addCanvasListener,100);  // > Initialization.Init Atoms:21
+  });
+
+  _model.addToInitialization(function() {
+    if (!__pagesEnabled["Read Presets"]) return;
+    var nOpt = presetList.length;	// number of preset options  // > Initialization.Read Presets:1
+    //console.log("nOpt="+nOpt);  // > Initialization.Read Presets:2
+    options=[];  // > Initialization.Read Presets:3
+    map= new Map();  // > Initialization.Read Presets:4
+    options.push('Presets');  // > Initialization.Read Presets:5
+    map.set('Presets',0);  // > Initialization.Read Presets:6
+    options.push('Default');  // > Initialization.Read Presets:7
+    map.set('Default',1);  // > Initialization.Read Presets:8
+    for(var i=0; i<nOpt; i++){  // > Initialization.Read Presets:9
+      options.push(presetList[i].name);  // > Initialization.Read Presets:10
+      map.set(presetList[i].name,i+2);  // > Initialization.Read Presets:11
+      //console.log("preset="+presetList[i].name);  // > Initialization.Read Presets:12
+    }  // > Initialization.Read Presets:13
+  });
+
+  _model.addToInitialization(function() {
+    if (!__pagesEnabled["ComPADRE"]) return;
+    var _view_super_enableEPub = _view._enableEPub;  // > Initialization.ComPADRE:1
+    _view._enableEPub = function(value) {    // > Initialization.ComPADRE:2
+       _view_super_enableEPub(value);  // > Initialization.ComPADRE:3
+       try{runEJSSonload()}catch(err){  // > Initialization.ComPADRE:4
+         console.log('runEJSSonload error: '+err)  // > Initialization.ComPADRE:5
+       } // runs the reflow() function on Compadre  // > Initialization.ComPADRE:6
+    }  // > Initialization.ComPADRE:7
+  });
+
+  _model.addToInitialization(function() {
+    if (!__pagesEnabled["OnLoad"]) return;
+    _model.addToOnload(comPADRE);  // > Initialization.OnLoad:1
+  });
+
+  _model.addToInitialization(function() {
+    if (!__pagesEnabled["AutoStart"]) return;
+    //_play();  // > Initialization.AutoStart:1
+    //startTime = (new Date()).getTime();  // > Initialization.AutoStart:2
+    //stepCount = 0;  // > Initialization.AutoStart:3
+    isRunning=true;  // > Initialization.AutoStart:4
+    simulate();  // > Initialization.AutoStart:5
+  });
+
+  _model.addToEvolution(function() {
+    if (!__pagesEnabled["Evol Page"]) return;
+    // do nothing; forces view update when running  // > Evolution.Evol Page:1
+  });
+
+  _model.addToFixedRelations(function() { _isPaused = _model.isPaused(); _isPlaying = _model.isPlaying(); });
+
+  _model.addToFixedRelations(function() {
+    if (!__pagesEnabled["Update State Vars"]) return;
+    updateTandP();  // > FixedRelations.Update State Vars:1
+    computeStats();  // > FixedRelations.Update State Vars:2
+    stepsPerSec =(stepCount===0)?0:1000*stepCount/((new Date()).getTime()-startTime);;  // > FixedRelations.Update State Vars:3
+  });
+
+  _model.addToFixedRelations(function() { _isPaused = _model.isPaused(); _isPlaying = _model.isPlaying(); });
+
+    _model._fontResized = function(iBase,iSize,iDelta) {
+      _view._fontResized(iBase,iSize,iDelta);
+  }; // end of _fontResized
+
+  function _getViews() {
+    var _viewsInfo = [];
+    var _counter = 0;
+    _viewsInfo[_counter++] = { name : "HtmlView Page", width : 800, height : 600 };
+    return _viewsInfo;
+  } // end of _getViews
+
+  function _selectView(_viewNumber) {
+    _view = null;
+    _view = new MolecularDynamicsBasic_View(_topFrame,_viewNumber,_libraryPath,_codebasePath);
+    var _view_super_reset = _view._reset;
+    _view._reset = function() {
+      _view_super_reset();
+      switch(_viewNumber) {
+        case -10 : break; // make Lint happy
+        default :
+        case 0:
+          _view.comboBox.linkProperty("Options",  function() { return options; }, function(_v) { options = _v; } ); // HtmlView Page linking property 'Options' for element 'comboBox'
+          _view.comboBox.setAction("OnChange", function(_data,_info) {
+  isRunning=false;
+  _pause();
+  selectedIndex = parseInt(map.get(selected.toString()));
+  if(selectedIndex<2)_reset();
+  else loadPreset(selectedIndex-2);
+  //selected='Presets';
+
+}); // HtmlView Page setting action 'OnChange' for element 'comboBox'
+          _view.comboBox.linkProperty("SelectedOptions",  function() { return selected; }, function(_v) { selected = _v; } ); // HtmlView Page linking property 'SelectedOptions' for element 'comboBox'
+          _view.dtField.linkProperty("Value",  function() { return dt; }, function(_v) { dt = _v; } ); // HtmlView Page linking property 'Value' for element 'dtField'
+          _view.dtField.linkProperty("Editable",  function() { return _isPaused; } ); // HtmlView Page linking property 'Editable' for element 'dtField'
+          _view.dtField.setAction("OnChange", function(_data,_info) {
+  dt=Math.max(1.0E-3,dt);
+  dt=Math.min(dt,0.5);
+  startTime = (new Date()).getTime();
+  stepCount = 0;
+
+}); // HtmlView Page setting action 'OnChange' for element 'dtField'
+          _view.nField.linkProperty("Value",  function() { return N; }, function(_v) { N = _v; } ); // HtmlView Page linking property 'Value' for element 'nField'
+          _view.nField.setAction("OnChange", function(_data,_info) {
+  changeN();
+  _initialize();
+
+}); // HtmlView Page setting action 'OnChange' for element 'nField'
+          _view.nField.linkProperty("Editable",  function() { return _isPaused; } ); // HtmlView Page linking property 'Editable' for element 'nField'
+          _view.boxField.linkProperty("Value",  function() { return boxWidth; }, function(_v) { boxWidth = _v; } ); // HtmlView Page linking property 'Value' for element 'boxField'
+          _view.boxField.setAction("OnChange", function(_data,_info) {
+  pxPerUnit = width / boxWidth;
+  if(getMaxN()<N) changeN();
+  _initialize();
+
+}); // HtmlView Page setting action 'OnChange' for element 'boxField'
+          _view.boxField.linkProperty("Editable",  function() { return _isPaused; } ); // HtmlView Page linking property 'Editable' for element 'boxField'
+          _view.mainPanel.linkProperty("Height",  function() { return height; }, function(_v) { height = _v; } ); // HtmlView Page linking property 'Height' for element 'mainPanel'
+          _view.mainPanel.linkProperty("Width",  function() { return width; }, function(_v) { width = _v; } ); // HtmlView Page linking property 'Width' for element 'mainPanel'
+          _view.canvas.linkProperty("Height",  function() { return height; }, function(_v) { height = _v; } ); // HtmlView Page linking property 'Height' for element 'canvas'
+          _view.canvas.linkProperty("Width",  function() { return width; }, function(_v) { width = _v; } ); // HtmlView Page linking property 'Width' for element 'canvas'
+          _view.canvas.setAction("OnRelease", mouseUp); // HtmlView Page setting action 'OnRelease' for element 'canvas'
+          _view.canvas.setAction("OnExit", mouseUp); // HtmlView Page setting action 'OnExit' for element 'canvas'
+          _view.canvas.setAction("OnPress", mouseDown); // HtmlView Page setting action 'OnPress' for element 'canvas'
+          _view.canvas.setAction("OnDrag", mouseMove); // HtmlView Page setting action 'OnDrag' for element 'canvas'
+          _view.selectDataPanel.linkProperty("CSS",  function() { return {"display":"block",   "text-align": "left",  "position":"absolute",   "left":"100", "top":"100", "width":"94px","height":"75px",  "background-color":"rgba(245,245,245,0.8)",  "padding":"3px",  "border":"1px solid gray",  "font-family":"monospace",  "font-size":"12px"}; } ); // HtmlView Page linking property 'CSS' for element 'selectDataPanel'
+          _view.selectDataPanel.linkProperty("Html",  function() { return atomInfo; }, function(_v) { atomInfo = _v; } ); // HtmlView Page linking property 'Html' for element 'selectDataPanel'
+          _view.selectDataPanel.linkProperty("Display",  function() { return dataDisplay; }, function(_v) { dataDisplay = _v; } ); // HtmlView Page linking property 'Display' for element 'selectDataPanel'
+          _view.energyField.linkProperty("Value",  function() { return kineticE + potentialE + gravitationalE; } ); // HtmlView Page linking property 'Value' for element 'energyField'
+          _view.tempField.linkProperty("Value",  function() { return averageT; }, function(_v) { averageT = _v; } ); // HtmlView Page linking property 'Value' for element 'tempField'
+          _view.pressureField.linkProperty("Value",  function() { return averageP; }, function(_v) { averageP = _v; } ); // HtmlView Page linking property 'Value' for element 'pressureField'
+          _view.resetStatsButton.setAction("OnPress", function(_data,_info) {
+  resetTime();
+
+}); // HtmlView Page setting action 'OnPress' for element 'resetStatsButton'
+          _view.moreButton.setAction("OffClick", function(_data,_info) {
+  moreDisplay="none";
+
+}); // HtmlView Page setting action 'OffClick' for element 'moreButton'
+          _view.moreButton.setAction("OnClick", function(_data,_info) {
+  moreDisplay="block";
+
+}); // HtmlView Page setting action 'OnClick' for element 'moreButton'
+          _view.statePanel2.linkProperty("Display",  function() { return moreDisplay; }, function(_v) { moreDisplay = _v; } ); // HtmlView Page linking property 'Display' for element 'statePanel2'
+          _view.keField.linkProperty("Value",  function() { return kineticE; }, function(_v) { kineticE = _v; } ); // HtmlView Page linking property 'Value' for element 'keField'
+          _view.peField.linkProperty("Value",  function() { return potentialE; }, function(_v) { potentialE = _v; } ); // HtmlView Page linking property 'Value' for element 'peField'
+          _view.geField.linkProperty("Value",  function() { return gravitationalE; }, function(_v) { gravitationalE = _v; } ); // HtmlView Page linking property 'Value' for element 'geField'
+          _view.spfField.linkProperty("Value",  function() { return spd; }, function(_v) { spd = _v; } ); // HtmlView Page linking property 'Value' for element 'spfField'
+          _view.spfField.setAction("OnChange", function(_data,_info) {
+  spd=Math.max(1,spd);
+  spd=Math.min(99,spd);
+
+}); // HtmlView Page setting action 'OnChange' for element 'spfField'
+          _view.gField.linkProperty("Value",  function() { return g; }, function(_v) { g = _v; } ); // HtmlView Page linking property 'Value' for element 'gField'
+          _view.gField.setAction("OnChange", function(_data,_info) {
+  g=Math.max(-1,g);
+  g=Math.min(1.0,g);
+
+}); // HtmlView Page setting action 'OnChange' for element 'gField'
+          _view.adaptCheck.linkProperty("Checked",  function() { return dtAdapt; }, function(_v) { dtAdapt = _v; } ); // HtmlView Page linking property 'Checked' for element 'adaptCheck'
+          _view.twoStateButton.setAction("OffClick", function(_data,_info) {
+  _play();
+  startTime = (new Date()).getTime();
+  stepCount = 0;
+  isRunning=true;
+  simulate();
+
+}); // HtmlView Page setting action 'OffClick' for element 'twoStateButton'
+          _view.twoStateButton.linkProperty("State",  function() { return _isPlaying; } ); // HtmlView Page linking property 'State' for element 'twoStateButton'
+          _view.twoStateButton.setAction("OnClick", function(_data,_info) {
+  isRunning=false;
+  _pause();
+
+}); // HtmlView Page setting action 'OnClick' for element 'twoStateButton'
+          _view.singleStepButton.setAction("OnClick", function(_data,_info) {
+  isRunning=false;
+  _pause();
+  simulate();
+  stepCount = 0;
+
+}); // HtmlView Page setting action 'OnClick' for element 'singleStepButton'
+          _view.resetTimeButton.setAction("OnClick", function(_data,_info) {
+  isRunning=false;
+  _pause();
+  if(selectedIndex<2)_initialize();
+  else loadPreset(selectedIndex-2);
+
+}); // HtmlView Page setting action 'OnClick' for element 'resetTimeButton'
+          _view.resetButton.setAction("OnClick", function(_data,_info) {
+  isRunning=false;
+  _pause();
+  _reset();
+
+}); // HtmlView Page setting action 'OnClick' for element 'resetButton'
+          _view.fasterButton.setAction("OnClick", function(_data,_info) {
+  speedFactor(1.1);
+
+}); // HtmlView Page setting action 'OnClick' for element 'fasterButton'
+          _view.slowerButton.setAction("OnClick", function(_data,_info) {
+  speedFactor(0.9);
+
+}); // HtmlView Page setting action 'OnClick' for element 'slowerButton'
+          _view.freezeButton.setAction("OnClick", function(_data,_info) {
+  speedFactor(0);
+
+}); // HtmlView Page setting action 'OnClick' for element 'freezeButton'
+          _view.reverseButton.setAction("OnClick", function(_data,_info) {
+  speedFactor(-1);
+
+}); // HtmlView Page setting action 'OnClick' for element 'reverseButton'
+          break;
+      } // end of switch
+    }; // end of new reset
+
+    _model.setView(_view);
+    _model.reset();
+    _view._enableEPub();
+  } // end of _selectView
+
+  _model.setAutoplay(false);
+  _model.setFPS(4);
+  _model.setStepsPerDisplay(1);
+  _selectView(_model._autoSelectView(_getViews())); // this includes _model.reset()
+  return _model;
+}
+
+function MolecularDynamicsBasic_View (_topFrame,_viewNumber,_libraryPath,_codebasePath) {
+  var _view;
+  switch(_viewNumber) {
+    case -10 : break; // make Lint happy
+    default :
+    case 0: _view = MolecularDynamicsBasic_View_0 (_topFrame); break;
+  } // end of switch
+
+  if (_codebasePath) _view._setResourcePath(_codebasePath);
+
+  if (_libraryPath) _view._setLibraryPath(_libraryPath);
+
+
+  return _view;
+} // end of main function
+
+function MolecularDynamicsBasic_View_0 (_topFrame) {
+  var _view = EJSS_CORE.createView(_topFrame);
+
+  _view._reset = function() {
+    _view._clearAll();
+    _view._addElement(EJSS_INTERFACE.wrappedPanel,"wrappedPanel", _view._topFrame) // EJsS HtmlView.HtmlView Page: declaration of element 'wrappedPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"titlePanel", _view.wrappedPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'titlePanel'
+      .setProperty("Visibility",false) // EJsS HtmlView.HtmlView Page: setting property 'Visibility' for element 'titlePanel'
+      .setProperty("Display","none") // EJsS HtmlView.HtmlView Page: setting property 'Display' for element 'titlePanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"titleLabel", _view.titlePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'titleLabel'
+      .setProperty("Text","<h1>Molecular Dynamics Exploration</h1>") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'titleLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"upperPanel", _view.wrappedPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'upperPanel'
+      .setProperty("Visibility",false) // EJsS HtmlView.HtmlView Page: setting property 'Visibility' for element 'upperPanel'
+      .setProperty("Display","none") // EJsS HtmlView.HtmlView Page: setting property 'Display' for element 'upperPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.comboBox,"comboBox", _view.upperPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'comboBox'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'comboBox'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"dtPanel", _view.upperPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'dtPanel'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'dtPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"dtLabel", _view.dtPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'dtLabel'
+      .setProperty("Text"," &#916;t =") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'dtLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"dtField", _view.dtPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'dtField'
+      .setProperty("Width",50) // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'dtField'
+      .setProperty("Format","0.0E0") // EJsS HtmlView.HtmlView Page: setting property 'Format' for element 'dtField'
+      .setProperty("Tooltip","Number of Verlet setps between screen updates") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'dtField'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"nPanel", _view.upperPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'nPanel'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'nPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"nLabel", _view.nPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'nLabel'
+      .setProperty("Text","N =") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'nLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"nField", _view.nPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'nField'
+      .setProperty("Width",40) // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'nField'
+      .setProperty("Format","0") // EJsS HtmlView.HtmlView Page: setting property 'Format' for element 'nField'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"boxPanel", _view.upperPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'boxPanel'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'boxPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"boxLabel", _view.boxPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'boxLabel'
+      .setProperty("Text"," Width (au) =") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'boxLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"boxField", _view.boxPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'boxField'
+      .setProperty("Width",45) // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'boxField'
+      .setProperty("Format","0.0") // EJsS HtmlView.HtmlView Page: setting property 'Format' for element 'boxField'
+      .setProperty("Tooltip","Width of container in atomic units") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'boxField'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"mainPanel", _view.wrappedPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'mainPanel'
+      .setProperty("CSS",{ "display":"block",   "position":"relative",   "top":"0px",   "left":"0px" }) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'mainPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.canvas,"canvas", _view.mainPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'canvas'
+      .setProperty("Enabled",true) // EJsS HtmlView.HtmlView Page: setting property 'Enabled' for element 'canvas'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"selectDataPanel", _view.mainPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'selectDataPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"controlPanel", _view.wrappedPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'controlPanel'
+      .setProperty("Width","100%") // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'controlPanel'
+      .setProperty("Visibility",false) // EJsS HtmlView.HtmlView Page: setting property 'Visibility' for element 'controlPanel'
+      .setProperty("Display","none") // EJsS HtmlView.HtmlView Page: setting property 'Display' for element 'controlPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"statePanel", _view.controlPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'statePanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"energyPanel", _view.statePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'energyPanel'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'energyPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"energyLabel", _view.energyPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'energyLabel'
+      .setProperty("Text"," E =") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'energyLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"energyField", _view.energyPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'energyField'
+      .setProperty("Width",45) // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'energyField'
+      .setProperty("Format","0.00") // EJsS HtmlView.HtmlView Page: setting property 'Format' for element 'energyField'
+      .setProperty("Editable",false) // EJsS HtmlView.HtmlView Page: setting property 'Editable' for element 'energyField'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"tempPanel", _view.statePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'tempPanel'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'tempPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"tempLabel", _view.tempPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'tempLabel'
+      .setProperty("Text"," T =") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'tempLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"tempField", _view.tempPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'tempField'
+      .setProperty("Width",45) // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'tempField'
+      .setProperty("Format","0.000") // EJsS HtmlView.HtmlView Page: setting property 'Format' for element 'tempField'
+      .setProperty("Editable",false) // EJsS HtmlView.HtmlView Page: setting property 'Editable' for element 'tempField'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"pressurePanel", _view.statePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'pressurePanel'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'pressurePanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"pressureLabel", _view.pressurePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'pressureLabel'
+      .setProperty("Text"," P =") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'pressureLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"pressureField", _view.pressurePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'pressureField'
+      .setProperty("Width",45) // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'pressureField'
+      .setProperty("Format","0.000") // EJsS HtmlView.HtmlView Page: setting property 'Format' for element 'pressureField'
+      .setProperty("Editable",false) // EJsS HtmlView.HtmlView Page: setting property 'Editable' for element 'pressureField'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.button,"resetStatsButton", _view.statePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'resetStatsButton'
+      .setProperty("Tooltip","Reset statistics") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'resetStatsButton'
+      .setProperty("ImageUrl","/org/opensourcephysics/resources/controls/images/reset2.gif") // EJsS HtmlView.HtmlView Page: setting property 'ImageUrl' for element 'resetStatsButton'
+      .setProperty("Text"," Stats") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'resetStatsButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.twoStateButton,"moreButton", _view.statePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'moreButton'
+      .setProperty("TextOn","More") // EJsS HtmlView.HtmlView Page: setting property 'TextOn' for element 'moreButton'
+      .setProperty("TextOff","Less") // EJsS HtmlView.HtmlView Page: setting property 'TextOff' for element 'moreButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"statePanel2", _view.controlPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'statePanel2'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"kePamel", _view.statePanel2) // EJsS HtmlView.HtmlView Page: declaration of element 'kePamel'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'kePamel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"keLabel", _view.kePamel) // EJsS HtmlView.HtmlView Page: declaration of element 'keLabel'
+      .setProperty("Text"," KE =") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'keLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"keField", _view.kePamel) // EJsS HtmlView.HtmlView Page: declaration of element 'keField'
+      .setProperty("Width",40) // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'keField'
+      .setProperty("Format","0.0") // EJsS HtmlView.HtmlView Page: setting property 'Format' for element 'keField'
+      .setProperty("Editable",false) // EJsS HtmlView.HtmlView Page: setting property 'Editable' for element 'keField'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"pePanel", _view.statePanel2) // EJsS HtmlView.HtmlView Page: declaration of element 'pePanel'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'pePanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"peLabel", _view.pePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'peLabel'
+      .setProperty("Text"," PE =") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'peLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"peField", _view.pePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'peField'
+      .setProperty("Width",40) // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'peField'
+      .setProperty("Format","0.0") // EJsS HtmlView.HtmlView Page: setting property 'Format' for element 'peField'
+      .setProperty("Editable",false) // EJsS HtmlView.HtmlView Page: setting property 'Editable' for element 'peField'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"gePanel", _view.statePanel2) // EJsS HtmlView.HtmlView Page: declaration of element 'gePanel'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'gePanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"geLabel", _view.gePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'geLabel'
+      .setProperty("Text"," GE =") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'geLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"geField", _view.gePanel) // EJsS HtmlView.HtmlView Page: declaration of element 'geField'
+      .setProperty("Width",40) // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'geField'
+      .setProperty("Format","0.00") // EJsS HtmlView.HtmlView Page: setting property 'Format' for element 'geField'
+      .setProperty("Editable",false) // EJsS HtmlView.HtmlView Page: setting property 'Editable' for element 'geField'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"spfPanel", _view.statePanel2) // EJsS HtmlView.HtmlView Page: declaration of element 'spfPanel'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'spfPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"spfLabel", _view.spfPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'spfLabel'
+      .setProperty("Text"," SPF =") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'spfLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"spfField", _view.spfPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'spfField'
+      .setProperty("Width",30) // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'spfField'
+      .setProperty("Format","0") // EJsS HtmlView.HtmlView Page: setting property 'Format' for element 'spfField'
+      .setProperty("Tooltip","Steps per frame") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'spfField'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"gPanel", _view.statePanel2) // EJsS HtmlView.HtmlView Page: declaration of element 'gPanel'
+      .setProperty("CSS",{"display":"inline-block"}) // EJsS HtmlView.HtmlView Page: setting property 'CSS' for element 'gPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"gLabel", _view.gPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'gLabel'
+      .setProperty("Text"," g =") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'gLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"gField", _view.gPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'gField'
+      .setProperty("Width",30) // EJsS HtmlView.HtmlView Page: setting property 'Width' for element 'gField'
+      .setProperty("Format","0.000") // EJsS HtmlView.HtmlView Page: setting property 'Format' for element 'gField'
+      .setProperty("Tooltip","Constant acceleration") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'gField'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.checkBox,"adaptCheck", _view.statePanel2) // EJsS HtmlView.HtmlView Page: declaration of element 'adaptCheck'
+      .setProperty("Tooltip","Adapt time step to stabelize system") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'adaptCheck'
+      .setProperty("Text","Adapt") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'adaptCheck'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"buttonPanel", _view.controlPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'buttonPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.twoStateButton,"twoStateButton", _view.buttonPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'twoStateButton'
+      .setProperty("Tooltip","Run and pause simulation") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'twoStateButton'
+      .setProperty("ImageOnUrl","/org/opensourcephysics/resources/controls/images/stop.gif") // EJsS HtmlView.HtmlView Page: setting property 'ImageOnUrl' for element 'twoStateButton'
+      .setProperty("ImageOffUrl","/org/opensourcephysics/resources/controls/images/play.gif") // EJsS HtmlView.HtmlView Page: setting property 'ImageOffUrl' for element 'twoStateButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.button,"singleStepButton", _view.buttonPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'singleStepButton'
+      .setProperty("Tooltip","Single step simulation") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'singleStepButton'
+      .setProperty("ImageUrl","/org/opensourcephysics/resources/controls/images/stepforward.gif") // EJsS HtmlView.HtmlView Page: setting property 'ImageUrl' for element 'singleStepButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.button,"resetTimeButton", _view.buttonPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'resetTimeButton'
+      .setProperty("Tooltip","Resets time with current presets") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'resetTimeButton'
+      .setProperty("ImageUrl","/org/opensourcephysics/resources/controls/images/reset1.gif") // EJsS HtmlView.HtmlView Page: setting property 'ImageUrl' for element 'resetTimeButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.button,"resetButton", _view.buttonPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'resetButton'
+      .setProperty("Tooltip","Resets simulation to orginal state") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'resetButton'
+      .setProperty("ImageUrl","/org/opensourcephysics/resources/controls/images/reset.gif") // EJsS HtmlView.HtmlView Page: setting property 'ImageUrl' for element 'resetButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.button,"fasterButton", _view.buttonPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'fasterButton'
+      .setProperty("Tooltip","Increase atom speed by 10%") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'fasterButton'
+      .setProperty("Text","Heat") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'fasterButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.button,"slowerButton", _view.buttonPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'slowerButton'
+      .setProperty("Tooltip","Decrease atom speed by 10%") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'slowerButton'
+      .setProperty("Text","Cool") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'slowerButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.button,"freezeButton", _view.buttonPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'freezeButton'
+      .setProperty("Tooltip","Set atom speed = 0") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'freezeButton'
+      .setProperty("Text","Freeze") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'freezeButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.button,"reverseButton", _view.buttonPanel) // EJsS HtmlView.HtmlView Page: declaration of element 'reverseButton'
+      .setProperty("Tooltip","Reverse atom velocity vectors") // EJsS HtmlView.HtmlView Page: setting property 'Tooltip' for element 'reverseButton'
+      .setProperty("Text","Reverse") // EJsS HtmlView.HtmlView Page: setting property 'Text' for element 'reverseButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"narrativePanel", _view._topFrame) // EJsS HtmlView.HtmlView Page: declaration of element 'narrativePanel'
+      .setProperty("Html","<h1>Molecular Dynamics</h1> <p>The Molecular Dynamics Exploration shows <a href=\"http://en.wikipedia.org/wiki/Molecular_dynamics\"> the molecular dynamics</a> of simple atoms and molecules in a two-dimensional system.  The force between the atoms is weakly attractive at short distances, but strongly repulsive when they touch.  Use the simulation to explore  <a href=\"http://itl.chem.ufl.edu/2045_s00/lectures/lec_f.html\">phases of matter</a>,  <a href=\"http://en.wikipedia.org/wiki/Emergence\">emergent behavior</a>,  <a href=\"http://en.wikipedia.org/wiki/Irreversibility\">irreversibility</a>,  and <a href=\"http://en.wikipedia.org/wiki/Equipartition_theorem\">thermal effects</a> at the  <a href=\"http://en.wikipedia.org/wiki/Nanotechnology\">nanoscale</a>.</p> <p><a href=\"javascript:window.open('http://www.compadre.org/OSP/')\">OSP Site</a></p> <h2>The physics</h2> <ul> <li>Each atom in the simulation moves in response to the forces exerted by nearby atoms and  the container walls, in accord with  <a href=\"http://en.wikipedia.org/wiki/Newton%27s_laws_of_motion\">Newton’s laws of motion</a>.   The simulation code knows nothing about phase transformations or crystal structure or irreversibility, yet these high-level phenomena, and others, emerge from the microscopic physics.</li> <li>The force between the atoms is calculated from the  <a href=\"http://en.wikipedia.org/wiki/Lennard-Jones_potential\">Lennard-Jones formula</a>  (truncated at a distance of 3 molecular diameters).  This is a reasonably accurate model  of the interactions between  <a href=\"http://en.wikipedia.org/wiki/Noble_gas\">noble gas</a> atoms.</li> <li>The simulation approximates Newton’s laws using  the <a href=\"http://en.wikipedia.org/wiki/Verlet_integration#Velocity_Verlet\">Verlet  algorithm</a> with the indicated <b>Time step &#916;t</b>.  Using too large a time step can make the simulation inaccurate and sometimes even unstable (see below).</li> <li>The simulation uses a natural system of units, with the atomic diameter, the atomic mass, the depth of the Lennard-Jones  potential, and <a href=\"http://en.wikipedia.org/wiki/Boltzmann_constant\">Boltzmann’s constant</a>  all set equal to 1.  For argon (for example),  the unit of distance is 3.4 <a href=\"http://en.wikipedia.org/wiki/Angstrom\">angstroms</a>,  the unit of mass  is 40 <a href=\"http://en.wikipedia.org/wiki/Atomic_mass_unit\">atomic mass units</a>,  and the unit of energy  is 0.012 <a href=\"http://en.wikipedia.org/wiki/Electron-volt\">electron-volts</a>;  the corresponding unit of time is then 2 picoseconds, the unit of velocity is 170 meters per second,  and the unit of temperature is 140 kelvin.</li> <li>The walls exert a linear (spring) force on the molecules, with a spring constant of 50 in natural units.</li> <li>There’s an optional uniform downward force, controlled by the gravity parameter <b>g</b> that is available using the <b>More</b> button.  The magnitude of this force, however, is not meant to be realistic. The numerical value should be small to avoid numerical instabiity.  A value of g ~0.01 gives a good visualization with the default initialialization but it is orders of magnitude larger than 9.8 m/s<sup>2</sup>. <a href=\"http://en.wikipedia.org/wiki/Earth%27s_gravity\">Earth’s gravitational constant</a> is  utterly negligible in the units used here (a little over 10<sup>−13</sup> for argon).</li> </ul> <h2>Credits</h2> <p>The Molecular Dynamics Exploration was developed by Wolfgang Christian at Davidson College using the Easy Java/JavaScript Simulation  (EjsS) modeling and authoring tool created by Francisco Esquembre.  This EjsS simulation is based on a pure JavaScript + HTML 5 simulation developed by <a href=\"http://physics.weber.edu/schroeder/\">Daniel V. Schroeder</a>,  <a href=\"http://physics.weber.edu\">Physics Department</a>,  <a href=\"http://weber.edu\">Weber State University</a>.  Schroeder's simulation is described in <a href=\"http://physics.weber.edu/schroeder/md/InteractiveMD.pdf\">Interactive Molecular Dynamics article</a> (pdf), published in the <a href=\"http://dx.doi.org/10.1119/1.4901185\">American Journal of Physics</a> <b>83</b> (3),  210-218 (2015), <a href=\"http://arxiv.org/abs/1502.06169\">arXiv:1502.06169 [physics.ed-ph]</a>. </p> <button style=\"display:block, margin:auto\" onclick=\"_model.showUI()\">User Interface Description</button>") // EJsS HtmlView.HtmlView Page: setting property 'Html' for element 'narrativePanel'
+      .setProperty("Visibility",false) // EJsS HtmlView.HtmlView Page: setting property 'Visibility' for element 'narrativePanel'
+      .setProperty("Display","none") // EJsS HtmlView.HtmlView Page: setting property 'Display' for element 'narrativePanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"narrative2Panel", _view._topFrame) // EJsS HtmlView.HtmlView Page: declaration of element 'narrative2Panel'
+      .setProperty("Html","<h2>The user interface:</h2> <ul> 	<li>Press the <b>Start</b> button to start the simulation, or the <b>Step</b> button 		to step forward in time by a small amount. The <b>Reset time</b> button restarts 		with the current parameters and the <b>Reset</b> button starts with the default 		configuration.</li> 	<li>The <b>Faster</b> and <b>Slower</b> buttons increase and decrease the speeds of 		all the atoms by 10%. Press them repeatedly for a greater effect. The 			<b>Freeze</b> button sets all the speeds to zero. Using these buttons puts 		the system out of thermal equilibrium; it’s fun to then watch it try to 		equilibrate.</li> 	<li>Don’t expect the <b>Reverse</b> button to accurately run the motion backwards 		for long; the motion is almost always <a 			href=\"http://en.wikipedia.org/wiki/Chaos_theory\">chaotic</a>!</li> 	<li>The <b>&#916;t</b> field sets the <b>time step </b>in the numerical algorithm. 		If the time step is too small the simulation becomes unstable, producing a 		runaway effect of exponentially increasing energy. This is a consequence of 		approximating the relations between position, velocity, and acceleration using 		small differences instead of derivatives. If the simulation becomes unstable, it 		will stop running and an alert box will appear. Do what it says and reduce the 		time step. </li> 	<li>The <b>Width</b> input field changes the size of the container (in units of 		atomic diameters); since the container is always drawn to fill the same area on 		the screen, this setting also determines the scale (zoom level) of the image. 		This parameter and other parameters that fundamentally change the system, such 		as the number of atoms, can only be changed when the system is paused.</li> 	<li>The statistics displayed below the image are total energy, temperature, and 		pressure. The temperature is computed from the average kinetic energy, so it 		isn’t accurate when there’s organized motion on a large scale. The temperature 		and pressure are averaged over time.</li> 	<li>The simulation time and the numerical simulation steps per second are displayed 		in yellow message boxes in the drawing panel. The steps per second will depend 		on the processor speed. Typical values are a few thousand steps per second on 		modern quad-core desktop computers and hundreds of steps per second on tablets 		and other mobile devices.</li> 	<li>Yes, you can drag the atoms around with the mouse or other pointing mechanism 		(at least on traditional computers and iOS touch-screen devices) when the 		simulation is paused. Note: Dragging may not work on some browsers until the 		simulaiton has executed at least one time step.</li> 	<li>The atoms are colored by speed. The brightest color is used for all speeds 		greater than 3.0.</li> </ul> <p>The <b>More detail</b> button displays additional data and options.</p> <ul> 	<li>Instantaneous kinetic energy <b>KE</b>, potential energy <b>PE</b>, and 		gravitational potential energy <b>GE</b> are shown.</li> 	<li>The <b>Adapt</b> check box will try to reduce the time step as needed to keep 		the calculation stable. Adapting the time step is not foolproof.</li> 	<li>The <b>Steps per frame (SPF)</b> field controls the number of numerical 		computations in a time step. Decreasing this value will slow the simulation's 		display without affecting the numerical accuracy. </li> </ul> <h2>Additional features</h2> <p>Be sure to explore the <b>Presets</b>. (Thanks to <a 		href=\"http://www.csupomona.edu/~ajm/\">John Mallinckrodt</a> for inspiring 	several of the presets.) Many of these presets use features that are only available 	in the original simulation by Dan Schroeder. We have imported the configuration file 	generated with Schroeder's simulation into the EjsS model.</p> <ul> 	<li>An atom can be anchored in space. Anchored atoms are drawn in light gray. You 		can drag an anchored atom when the simulaiton is paused.</li> 	<li>Two atoms can be connected together with a “bond” that creates a spring-like 		force between them (in addition to the Lennard-Jones force). The spring constant 		is 100 in natural units, and the equilibrium position is the same as for the 		Lennard-Jones force. Although this feature allows some interesting qualitative 		demonstrations, it is not realistic: Actual covalent bonds are thousands of 		times stiffer. Bonds are drawn as thin gray lines.</li> 	<li>Finally, atoms can have a“fixed temperature” of an atom, causing it to move 		randomly as if it is in contact with a heat bath at a specified temperature. The 		fixed-T atom will then be marked with a gray dot. (If the atom is part of a 		rigid solid, this feature has the side effect of exerting a drag force that 		impedes any macroscopic motion of the solid.)</li> </ul> <button style=\"display:block, margin:auto\" onclick=\"_model.showPhysics()\">Physics Description</button>") // EJsS HtmlView.HtmlView Page: setting property 'Html' for element 'narrative2Panel'
+      .setProperty("Visibility",false) // EJsS HtmlView.HtmlView Page: setting property 'Visibility' for element 'narrative2Panel'
+      .setProperty("Display","none") // EJsS HtmlView.HtmlView Page: setting property 'Display' for element 'narrative2Panel'
+      ;
+
+  };
+
+  return _view;
+}
+
+
+//--><!]]></script>
+  </head>
+  <body>
+    <div role="button" id="_topFrame" style="text-align:center"></div>
+  <div id="metadata" class="metadata">
+    <br />
+  </div>
+    <script type="text/javascript"><!--//--><![CDATA[//><!--
+      var _model;
+      var _scorm;
+      window.addEventListener('load',
+        function () { 
+          _model =  new MolecularDynamicsBasic("_topFrame","_ejs_library/",null);
+          if (typeof _isApp !== "undefined" && _isApp) _model.setRunAlways(true);
+          TextResizeDetector.TARGET_ELEMENT_ID = '_topFrame';
+          TextResizeDetector.USER_INIT_FUNC = function () {
+            var iBase = TextResizeDetector.addEventListener(function(e,args) {
+              _model._fontResized(args[0].iBase,args[0].iSize,args[0].iDelta);
+              },null);
+            _model._fontResized(iBase);
+          };
+          _model.onload();
+        }, false);
+    //--><!]]></script>
+  </body>
+</html>

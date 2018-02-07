@@ -1,0 +1,88 @@
+﻿/* This defines styles and classes used for OSP-EjsS Simulation pages */
+body { margin-left: 3%; margin-right: 3%; margin-top: 2%; margin-bottom: 5%; text-align: justify; font-size: medium; }
+h1, h2, h3, h4, h5, h6 {
+  page-break-after: avoid !important;
+  page-break-inside: avoid !important;
+  text-indent: 0px;
+  text-align: left;
+  font-family: Helvetica, Geneva, Arial, SunSans-Regular, sans-serif;}
+h1 { text-align: left; color: #900000; margin: 0; padding: 0.2em; font-size: 135% !important;}
+h2 { text-align: left; color: #900000; font-size: 120% !important; page-break-after: avoid !important;}
+h3 { text-align: left; color:#900000; font-size: 110% !important; page-break-after: avoid !important;}
+h4 { text-align: left; }
+h5 { text-align: left; }
+h6 { text-align: left; }
+li{text-align: left; margin-top: 1em; margin-bottom: 1em !important;}
+button { font-family: Georgia, "Times New Roman", Times, serif; font-size: medium; }
+p { font-family: Georgia, "Times New Roman", Times, serif; 
+  line-height: 1.5em;
+  margin: 0;
+  margin-bottom:1.5em;
+  text-align: justify;
+  orphans: 2;
+  widows: 2; }
+a:link { color:red}
+a:visited { color:blue}
+address {
+  margin-top: 1em;
+  padding-top: 1em;
+  border-top: thin dotted 
+}
+
+div.appletSection {
+}
+div.experimentsSection {
+}
+div.experiment, div.killExperiment {
+
+}
+div.experiment p {
+  display: inline;
+}
+
+svg { overflow: hidden; }
+
+input[readonly]
+{
+    background:lightgray;
+    color:black;
+}
+
+table {
+  border: 1px solid black;
+  display: table;
+  width: 100%;
+}
+table thead, table tbody {
+  float: left;
+  width: 100%;
+}
+
+table tbody {
+  overflow: auto;
+}
+table tr {
+  width: 100%;
+  display: table;
+}
+table th {
+  width: 1%;
+  border: 1px solid black;
+  text-align: center;
+}
+table td {
+  width: 1%;
+  border: 1px solid black;
+  text-align: right;
+}
+
+table thead {
+    background: lightgray;
+    overflow-y: scroll;
+    position: relative;
+}
+
+.BoxPanel {
+  background : pink;
+}
+
