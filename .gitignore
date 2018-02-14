@@ -1,0 +1,6 @@
+*.sh
+.DS_Store
+.Trashes
+.doc
+.docx
+*.bak
