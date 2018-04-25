@@ -9,12 +9,12 @@ f = 100.0
 R = 0.5
 L = 10.0
 t = 0
-dt = 0.001
+dt = 0.01
 v = vector(5.0,0,0)
 tube = cylinder(pos = vector(-L/2,0,0), axis = vector(L,0,0), radius = R, opacity=0.5)
 ball = sphere(pos=vector(-3.0,0,0), radius = R, color = color.red)
 while (t<10):
-    rate(100)
+    rate(10)
     if ball.pos.x > L/2-R: F1 = f*vector(-1,0,0)
     else: F1=vector(0,0,0)
     if ball.pos.x < -L/2+R: F2 = f*vector(1,0,0)
